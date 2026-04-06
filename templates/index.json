@@ -142,7 +142,7 @@
               }
             }
           },
-          "block_order": ["title", "image"]
+          "block_order": ["title"]
         }
       },
       "block_order": ["link"]
