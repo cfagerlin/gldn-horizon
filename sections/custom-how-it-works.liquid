@@ -1,0 +1,477 @@
+{% comment %}
+  sections/custom-how-it-works.liquid
+  GLDN — How It Works
+
+  Step-by-step fade carousel. Each slide has a media column
+  (image or video) and a text column (eyebrow, title, body, CTA).
+  Videos play when their slide becomes active, pause otherwise.
+  Native web component — no jQuery, no Slick.
+  Maps from legacy: sections/how_it_works.liquid
+{% endcomment %}
+
+{%- assign section_id = 'custom-how-it-works-' | append: section.id -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<section
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style custom-how-it-works"
+  id="{{ section_id }}"
+  aria-label="{{ section.settings.heading | default: 'How it works' | escape }}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+    <div class="custom-how-it-works__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="custom-how-it-works__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="custom-how-it-works__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.blocks.size > 0 -%}
+    <gldn-how-it-works
+      class="custom-how-it-works__carousel"
+      aria-roledescription="carousel"
+      {% if section.settings.autoplay %}
+        autoplay="{{ section.settings.autoplay_speed | times: 1000 }}"
+      {% endif %}
+    >
+      <div class="custom-how-it-works__slides" aria-live="polite" aria-atomic="false">
+        {%- for block in section.blocks -%}
+          {%- assign has_video = false -%}
+          {%- if block.settings.video != blank or block.settings.video_mobile != blank -%}
+            {%- assign has_video = true -%}
+          {%- endif -%}
+
+          <div
+            class="custom-how-it-works__slide{% if forloop.first %} is-active{% endif %} custom-how-it-works__slide--media-{{ section.settings.media_position }}"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="{{ forloop.index }} of {{ section.blocks.size }}"
+            {% unless forloop.first %}aria-hidden="true"{% endunless %}
+            {{ block.shopify_attributes }}
+          >
+            <div class="custom-how-it-works__media-col">
+              {%- if has_video -%}
+                <div class="custom-how-it-works__video-wrap">
+                  {%- if block.settings.video != blank -%}
+                    <video
+                      class="custom-how-it-works__video custom-how-it-works__video--desktop"
+                      src="{{ block.settings.video }}"
+                      {% if block.settings.video_loop %}loop{% endif %}
+                      muted
+                      playsinline
+                      preload="none"
+                      aria-label="{{ block.settings.title | default: '' | escape }}"
+                    ></video>
+                  {%- endif -%}
+                  {%- if block.settings.video_mobile != blank -%}
+                    <video
+                      class="custom-how-it-works__video custom-how-it-works__video--mobile"
+                      src="{{ block.settings.video_mobile }}"
+                      {% if block.settings.video_loop %}loop{% endif %}
+                      muted
+                      playsinline
+                      preload="none"
+                      aria-label="{{ block.settings.title | default: '' | escape }}"
+                    ></video>
+                  {%- endif -%}
+                </div>
+              {%- elsif block.settings.image != blank -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 1000
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '400, 600, 800, 1000',
+                    sizes: '(min-width: 750px) 50vw, 90vw',
+                    alt: block.settings.title | default: '' | escape,
+                    class: 'custom-how-it-works__image'
+                }}
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'custom-how-it-works__image custom-how-it-works__placeholder' }}
+              {%- endif -%}
+            </div>
+
+            <div class="custom-how-it-works__text-col">
+              {%- if block.settings.eyebrow != blank -%}
+                <p class="custom-how-it-works__block-eyebrow">{{ block.settings.eyebrow | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <h3 class="custom-how-it-works__title">{{ block.settings.title | escape }}</h3>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <div class="custom-how-it-works__body rte">{{ block.settings.text }}</div>
+              {%- endif -%}
+              {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
+                <a
+                  class="button button-secondary custom-how-it-works__cta"
+                  href="{{ block.settings.button_link }}"
+                >
+                  {{ block.settings.button_label | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.blocks.size > 1 -%}
+        <div class="custom-how-it-works__controls">
+          <button
+            class="custom-how-it-works__arrow custom-how-it-works__arrow--prev"
+            aria-label="{{ 'accessibility.previous_slide' | t | default: 'Previous slide' }}"
+            data-carousel-prev
+          >
+            {{ 'icon-arrow-left.svg' | inline_asset_content }}
+          </button>
+          <span class="custom-how-it-works__counter" aria-hidden="true">
+            Step <span data-carousel-current>1</span> of {{ section.blocks.size }}
+          </span>
+          <button
+            class="custom-how-it-works__arrow custom-how-it-works__arrow--next"
+            aria-label="{{ 'accessibility.next_slide' | t | default: 'Next slide' }}"
+            data-carousel-next
+          >
+            {{ 'icon-arrow-right.svg' | inline_asset_content }}
+          </button>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_final_button and section.settings.final_button_label != blank and section.settings.final_button_link != blank -%}
+        <div class="custom-how-it-works__final-cta" data-final-cta aria-hidden="true">
+          <a class="button" href="{{ section.settings.final_button_link }}">
+            {{ section.settings.final_button_label | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+    </gldn-how-it-works>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+  .custom-how-it-works__head {
+    text-align: center;
+    margin-block-end: var(--gap-2xl);
+  }
+
+  .custom-how-it-works__eyebrow {
+    margin: 0 0 var(--gap-xs);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.65;
+  }
+
+  .custom-how-it-works__heading { margin: 0; }
+
+  .custom-how-it-works__carousel { display: block; }
+
+  .custom-how-it-works__slides {
+    display: grid;
+    grid-template-areas: 'stack';
+  }
+
+  .custom-how-it-works__slide {
+    grid-area: stack;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .custom-how-it-works__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Slide inner layout */
+  .custom-how-it-works__slide {
+    display: grid;
+    gap: var(--gap-2xl);
+    align-items: center;
+
+    @media screen and (min-width: 750px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .custom-how-it-works__slide--media-right {
+    @media screen and (min-width: 750px) {
+      .custom-how-it-works__media-col { order: 2; }
+      .custom-how-it-works__text-col { order: 1; }
+    }
+  }
+
+  /* Media */
+  .custom-how-it-works__image,
+  .custom-how-it-works__placeholder {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .custom-how-it-works__video-wrap { position: relative; }
+
+  .custom-how-it-works__video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .custom-how-it-works__video--mobile { display: none; }
+
+  @media screen and (max-width: 749px) {
+    .custom-how-it-works__video--desktop { display: none; }
+    .custom-how-it-works__video--mobile { display: block; }
+  }
+
+  /* Text column */
+  .custom-how-it-works__text-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  .custom-how-it-works__block-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.65;
+  }
+
+  .custom-how-it-works__title { margin: 0; font-size: clamp(1.5rem, 3vw, 2.25rem); }
+  .custom-how-it-works__body { margin: 0; }
+  .custom-how-it-works__cta { align-self: flex-start; }
+
+  /* Controls */
+  .custom-how-it-works__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-md);
+    margin-block-start: var(--gap-xl);
+  }
+
+  .custom-how-it-works__arrow {
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    padding: 0;
+  }
+
+  .custom-how-it-works__arrow:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .custom-how-it-works__arrow svg { width: 20px; height: 20px; display: block; }
+
+  .custom-how-it-works__counter {
+    font-size: 0.875rem;
+    min-width: 8ch;
+    text-align: center;
+  }
+
+  /* Final CTA (shown only on last slide) */
+  .custom-how-it-works__final-cta {
+    text-align: center;
+    margin-block-start: var(--gap-2xl);
+    transition: opacity 0.3s ease;
+  }
+
+  .custom-how-it-works__final-cta[aria-hidden='true'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-how-it-works__slide,
+    .custom-how-it-works__final-cta { transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('gldn-how-it-works')) {
+    class GldnHowItWorks extends HTMLElement {
+      #current = 0;
+      #slides = [];
+      #timer = null;
+
+      connectedCallback() {
+        this.#slides = Array.from(this.querySelectorAll('.custom-how-it-works__slide'));
+
+        this.querySelector('[data-carousel-prev]')?.addEventListener('click', () => this.#go(-1));
+        this.querySelector('[data-carousel-next]')?.addEventListener('click', () => this.#go(1));
+
+        this.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') this.#go(-1);
+          if (e.key === 'ArrowRight') this.#go(1);
+        });
+
+        const autoplayMs = parseInt(this.getAttribute('autoplay'), 10);
+        if (autoplayMs > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          this.#startAutoplay(autoplayMs);
+        }
+
+        this.#playActiveVideo();
+        this.#updateFinalCta();
+        this.#updateCounter();
+      }
+
+      disconnectedCallback() {
+        clearInterval(this.#timer);
+      }
+
+      #go(direction) {
+        const next = (this.#current + direction + this.#slides.length) % this.#slides.length;
+        this.#activate(next);
+      }
+
+      #activate(index) {
+        this.#pauseVideos(this.#slides[this.#current]);
+
+        this.#slides[this.#current].classList.remove('is-active');
+        this.#slides[this.#current].setAttribute('aria-hidden', 'true');
+
+        this.#current = index;
+        this.#slides[this.#current].classList.add('is-active');
+        this.#slides[this.#current].removeAttribute('aria-hidden');
+
+        this.#playActiveVideo();
+        this.#updateFinalCta();
+        this.#updateCounter();
+      }
+
+      #playActiveVideo() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const activeSlide = this.#slides[this.#current];
+        const isMobile = window.matchMedia('(max-width: 749px)').matches;
+        const selector = isMobile
+          ? '.custom-how-it-works__video--mobile'
+          : '.custom-how-it-works__video--desktop';
+
+        const video = activeSlide.querySelector(selector)
+          || activeSlide.querySelector('.custom-how-it-works__video');
+
+        video?.play().catch(() => {});
+      }
+
+      #pauseVideos(slide) {
+        slide.querySelectorAll('video').forEach((v) => { v.pause(); v.currentTime = 0; });
+      }
+
+      #updateFinalCta() {
+        const cta = this.querySelector('[data-final-cta]');
+        if (!cta) return;
+        const isLast = this.#current === this.#slides.length - 1;
+        cta.setAttribute('aria-hidden', isLast ? 'false' : 'true');
+      }
+
+      #updateCounter() {
+        const el = this.querySelector('[data-carousel-current]');
+        if (el) el.textContent = this.#current + 1;
+      }
+
+      #startAutoplay(ms) {
+        this.#timer = setInterval(() => this.#go(1), ms);
+        this.addEventListener('mouseenter', () => clearInterval(this.#timer));
+        this.addEventListener('mouseleave', () => {
+          this.#timer = setInterval(() => this.#go(1), ms);
+        });
+      }
+    }
+
+    customElements.define('gldn-how-it-works', GldnHowItWorks);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "How It Works",
+  "tag": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-rotate slides", "default": false },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Seconds per slide",
+      "min": 3, "max": 9, "step": 1, "unit": "s",
+      "default": 5
+    },
+    { "type": "header", "content": "Final step CTA" },
+    { "type": "checkbox", "id": "show_final_button", "label": "Show button on last slide", "default": false },
+    { "type": "text", "id": "final_button_label", "label": "Button label" },
+    { "type": "url", "id": "final_button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    { "type": "header", "content": "Padding" },
+    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow / step number" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "richtext", "id": "text", "label": "Body text" },
+        { "type": "image_picker", "id": "image", "label": "Image (desktop)" },
+        { "type": "text", "id": "video", "label": "Video URL (desktop)", "info": "Link to a .mp4 file" },
+        { "type": "text", "id": "video_mobile", "label": "Video URL (mobile)", "info": "Optional separate mobile video" },
+        { "type": "checkbox", "id": "video_loop", "label": "Loop video", "default": true },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How It Works",
+      "category": "Storytelling",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    }
+  ]
+}
+{% endschema %}

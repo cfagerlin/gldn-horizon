@@ -1,0 +1,327 @@
+{% comment %}
+  sections/custom-cta-gallery.liquid
+  GLDN — CTA Gallery
+
+  CSS hover-based image grid. Up to 6 blocks. No JavaScript.
+  Maps from legacy: sections/cta_gallery.liquid
+{% endcomment %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style custom-cta-gallery"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --cta-gallery-height: {{ section.settings.gallery_height }}%;
+    --cta-gallery-gap: {{ section.settings.gallery_gap }}px;
+  "
+>
+  {%- if section.settings.heading != blank -%}
+    <div class="custom-cta-gallery__head">
+      <h2 class="custom-cta-gallery__heading">{{ section.settings.heading | escape }}</h2>
+    </div>
+  {%- endif -%}
+
+  {%- if section.blocks.size > 0 -%}
+    <div
+      class="custom-cta-gallery__grid custom-cta-gallery__grid--{{ section.blocks.size }}"
+      role="list"
+    >
+      {%- for block in section.blocks -%}
+        <div
+          class="custom-cta-gallery__item{% if block.settings.hide_mobile %} custom-cta-gallery__item--hide-mobile{% endif %}"
+          role="listitem"
+          {{ block.shopify_attributes }}
+        >
+          <a
+            class="custom-cta-gallery__link"
+            href="{{ block.settings.link | default: '#' }}"
+            {% if block.settings.title != blank %}
+              aria-label="{{ block.settings.title | escape }}"
+            {% elsif block.settings.eyebrow != blank %}
+              aria-label="{{ block.settings.eyebrow | escape }}"
+            {% else %}
+              aria-hidden="true" tabindex="-1"
+            {% endif %}
+          >
+            {%- if block.settings.image != blank -%}
+              <div class="custom-cta-gallery__img custom-cta-gallery__img--default">
+                {{
+                  block.settings.image
+                  | image_url: width: 1200
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '400, 600, 800, 1200',
+                    sizes: '(min-width: 750px) 33vw, 50vw',
+                    alt: block.settings.title | default: block.settings.eyebrow | escape
+                }}
+              </div>
+            {%- else -%}
+              <div class="custom-cta-gallery__img custom-cta-gallery__img--placeholder">
+                {{ 'image' | placeholder_svg_tag: 'custom-cta-gallery__placeholder-svg' }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.hover_image != blank -%}
+              <div class="custom-cta-gallery__img custom-cta-gallery__img--hover" aria-hidden="true">
+                {{
+                  block.settings.hover_image
+                  | image_url: width: 1200
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '400, 600, 800, 1200',
+                    sizes: '(min-width: 750px) 33vw, 50vw',
+                    alt: ''
+                }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.eyebrow != blank or block.settings.title != blank or block.settings.button_label != blank -%}
+              <div class="custom-cta-gallery__info" aria-hidden="true">
+                {%- if block.settings.eyebrow != blank -%}
+                  <p class="custom-cta-gallery__eyebrow">{{ block.settings.eyebrow | escape }}</p>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <p class="custom-cta-gallery__title">{{ block.settings.title | escape }}</p>
+                {%- endif -%}
+                {%- if block.settings.button_label != blank -%}
+                  <span class="custom-cta-gallery__btn">{{ block.settings.button_label | escape }}</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .custom-cta-gallery__head {
+    text-align: center;
+    margin-block-end: var(--gap-xl);
+  }
+
+  .custom-cta-gallery__heading {
+    margin: 0;
+  }
+
+  .custom-cta-gallery__grid {
+    display: grid;
+    gap: var(--cta-gallery-gap, 4px);
+  }
+
+  /* Layout variants by block count */
+  .custom-cta-gallery__grid--2 { grid-template-columns: 1fr 1fr; }
+  .custom-cta-gallery__grid--3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+  .custom-cta-gallery__grid--3 .custom-cta-gallery__item:first-child { grid-row: 1 / 3; }
+  .custom-cta-gallery__grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .custom-cta-gallery__grid--5 { grid-template-columns: repeat(3, 1fr); }
+  .custom-cta-gallery__grid--5 .custom-cta-gallery__item:nth-child(n+4) { grid-column: span 1; }
+  .custom-cta-gallery__grid--6 { grid-template-columns: repeat(3, 1fr); }
+
+  .custom-cta-gallery__item {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .custom-cta-gallery__item::before {
+    content: '';
+    display: block;
+    padding-block-start: var(--cta-gallery-height, 56%);
+  }
+
+  .custom-cta-gallery__link {
+    position: absolute;
+    inset: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .custom-cta-gallery__img {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .custom-cta-gallery__img img,
+  .custom-cta-gallery__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .custom-cta-gallery__img--hover {
+    opacity: 0;
+  }
+
+  .custom-cta-gallery__info {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: var(--padding-md, 16px);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent);
+    color: #fff;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .custom-cta-gallery__eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+  }
+
+  .custom-cta-gallery__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .custom-cta-gallery__btn {
+    display: inline-block;
+    margin-block-start: 6px;
+    font-size: 0.875rem;
+    text-decoration: underline;
+  }
+
+  /* Hover: swap images and reveal overlay */
+  @media (hover: hover) {
+    .custom-cta-gallery__item:hover .custom-cta-gallery__img--default { opacity: 0; }
+    .custom-cta-gallery__item:hover .custom-cta-gallery__img--hover { opacity: 1; }
+    .custom-cta-gallery__item:hover .custom-cta-gallery__info {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Touch: always show info overlay */
+  @media (hover: none) {
+    .custom-cta-gallery__info {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-cta-gallery__item--hide-mobile { display: none; }
+
+    .custom-cta-gallery__grid--3,
+    .custom-cta-gallery__grid--5,
+    .custom-cta-gallery__grid--6 {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto;
+    }
+
+    .custom-cta-gallery__grid--3 .custom-cta-gallery__item:first-child {
+      grid-row: auto;
+      grid-column: span 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-cta-gallery__img,
+    .custom-cta-gallery__info { transition: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CTA Gallery",
+  "tag": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "range",
+      "id": "gallery_height",
+      "label": "Cell height (aspect ratio %)",
+      "min": 30,
+      "max": 120,
+      "step": 2,
+      "unit": "%",
+      "default": 56,
+      "info": "Height as a percentage of width"
+    },
+    {
+      "type": "range",
+      "id": "gallery_gap",
+      "label": "Gap between cells",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0, "max": 100, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0, "max": 100, "step": 1, "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Gallery item",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "image_picker", "id": "hover_image", "label": "Hover image" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "checkbox", "id": "hide_mobile", "label": "Hide on mobile", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CTA Gallery",
+      "category": "Image",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,422 @@
+{% comment %}
+  sections/custom-dynamic-collections.liquid
+  GLDN — Dynamic Collections
+
+  Tab-based collection switcher. Each tab shows a grid of collection
+  items with image/title/CTA. Mobile collapses to a horizontal scroll.
+  Native web component — no jQuery, no Slick.
+  Maps from legacy: sections/dynamic_collections.liquid
+{% endcomment %}
+
+{%- assign section_id = 'custom-dynamic-collections-' | append: section.id -%}
+{%- assign tab_groups = section.blocks | where: 'type', 'group' -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<section
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style custom-dynamic-collections"
+  id="{{ section_id }}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+    <div class="custom-dynamic-collections__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="custom-dynamic-collections__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="custom-dynamic-collections__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if tab_groups.size > 0 -%}
+    <gldn-tab-switcher class="custom-dynamic-collections__tabs-wrap">
+      {%- if tab_groups.size > 1 -%}
+        <div
+          class="custom-dynamic-collections__tabs"
+          role="tablist"
+          aria-label="{{ section.settings.heading | default: 'Collections' | escape }}"
+        >
+          {%- for group in tab_groups -%}
+            <button
+              class="custom-dynamic-collections__tab{% if forloop.first %} is-active{% endif %}"
+              role="tab"
+              id="{{ section_id }}-tab-{{ forloop.index }}"
+              aria-selected="{{ forloop.first | json }}"
+              aria-controls="{{ section_id }}-panel-{{ forloop.index }}"
+              data-tab-index="{{ forloop.index0 }}"
+              {% unless forloop.first %}tabindex="-1"{% endunless %}
+              {{ group.shopify_attributes }}
+            >
+              {{ group.settings.tab_label | default: group.settings.eyebrow | default: 'Tab' | escape }}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <div class="custom-dynamic-collections__panels">
+        {%- for group in tab_groups -%}
+          <div
+            class="custom-dynamic-collections__panel{% if forloop.first %} is-active{% endif %}"
+            role="tabpanel"
+            id="{{ section_id }}-panel-{{ forloop.index }}"
+            aria-labelledby="{{ section_id }}-tab-{{ forloop.index }}"
+            {% unless forloop.first %}hidden{% endunless %}
+          >
+            {%- if group.settings.section_eyebrow != blank or group.settings.section_title != blank -%}
+              <div class="custom-dynamic-collections__panel-head">
+                {%- if group.settings.section_eyebrow != blank -%}
+                  <p class="custom-dynamic-collections__panel-eyebrow">{{ group.settings.section_eyebrow | escape }}</p>
+                {%- endif -%}
+                {%- if group.settings.section_title != blank -%}
+                  <h3 class="custom-dynamic-collections__panel-title">{{ group.settings.section_title | escape }}</h3>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <div
+              class="custom-dynamic-collections__grid"
+              style="--dc-columns: {{ section.settings.items_per_row }};"
+            >
+              {%- assign item_blocks = section.blocks | where: 'type', 'item' -%}
+              {%- for item in item_blocks -%}
+                {%- if item.settings.group_id == group.id -%}
+                  <div class="custom-dynamic-collections__item" {{ item.shopify_attributes }}>
+                    <a
+                      class="custom-dynamic-collections__item-link"
+                      href="{{ item.settings.link | default: '#' }}"
+                    >
+                      <div class="custom-dynamic-collections__item-media">
+                        {%- if item.settings.image != blank -%}
+                          {{
+                            item.settings.image
+                            | image_url: width: 800
+                            | image_tag:
+                              loading: 'lazy',
+                              widths: '300, 500, 800',
+                              sizes: '(min-width: 750px) 25vw, 50vw',
+                              alt: item.settings.title | default: '' | escape
+                          }}
+                        {%- else -%}
+                          {{ 'collection-1' | placeholder_svg_tag: 'custom-dynamic-collections__placeholder' }}
+                        {%- endif -%}
+                        {%- if item.settings.cta_label != blank -%}
+                          <div class="custom-dynamic-collections__item-overlay" aria-hidden="true">
+                            <span class="custom-dynamic-collections__item-cta">{{ item.settings.cta_label | escape }}</span>
+                          </div>
+                        {%- endif -%}
+                      </div>
+
+                      {%- if item.settings.title != blank or item.settings.subtitle != blank -%}
+                        <div class="custom-dynamic-collections__item-info">
+                          {%- if item.settings.title != blank -%}
+                            <p class="custom-dynamic-collections__item-title">{{ item.settings.title | escape }}</p>
+                          {%- endif -%}
+                          {%- if item.settings.subtitle != blank -%}
+                            <p class="custom-dynamic-collections__item-subtitle">{{ item.settings.subtitle | escape }}</p>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    </a>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </gldn-tab-switcher>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+  .custom-dynamic-collections__head {
+    text-align: center;
+    margin-block-end: var(--gap-2xl);
+  }
+
+  .custom-dynamic-collections__eyebrow {
+    margin: 0 0 var(--gap-xs);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.65;
+  }
+
+  .custom-dynamic-collections__heading { margin: 0; }
+
+  /* Tabs */
+  .custom-dynamic-collections__tabs {
+    display: flex;
+    gap: var(--gap-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-block-end: var(--gap-xl);
+  }
+
+  .custom-dynamic-collections__tab {
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 8px 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    color: inherit;
+  }
+
+  .custom-dynamic-collections__tab.is-active,
+  .custom-dynamic-collections__tab:hover {
+    opacity: 1;
+  }
+
+  .custom-dynamic-collections__tab.is-active {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    border-color: var(--color-foreground);
+  }
+
+  /* Panel */
+  .custom-dynamic-collections__panel { display: none; }
+  .custom-dynamic-collections__panel.is-active { display: block; }
+
+  .custom-dynamic-collections__panel-head {
+    text-align: center;
+    margin-block-end: var(--gap-xl);
+  }
+
+  .custom-dynamic-collections__panel-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+  }
+
+  .custom-dynamic-collections__panel-title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+  }
+
+  /* Grid */
+  .custom-dynamic-collections__grid {
+    display: grid;
+    gap: var(--gap-md);
+    grid-template-columns: repeat(var(--dc-columns, 4), 1fr);
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-dynamic-collections__grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: var(--gap-sm);
+      padding-block-end: var(--gap-sm);
+    }
+
+    .custom-dynamic-collections__item {
+      flex: 0 0 70vw;
+      scroll-snap-align: start;
+    }
+  }
+
+  /* Items */
+  .custom-dynamic-collections__item-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .custom-dynamic-collections__item-media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+  }
+
+  .custom-dynamic-collections__item-media img,
+  .custom-dynamic-collections__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  @media (hover: hover) {
+    .custom-dynamic-collections__item:hover .custom-dynamic-collections__item-media img {
+      transform: scale(1.04);
+    }
+
+    .custom-dynamic-collections__item:hover .custom-dynamic-collections__item-overlay {
+      opacity: 1;
+    }
+  }
+
+  .custom-dynamic-collections__item-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .custom-dynamic-collections__item-cta {
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 8px 20px;
+    font-size: 0.875rem;
+  }
+
+  .custom-dynamic-collections__item-info {
+    padding-block-start: var(--gap-sm);
+  }
+
+  .custom-dynamic-collections__item-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .custom-dynamic-collections__item-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-dynamic-collections__item-media img,
+    .custom-dynamic-collections__item-overlay { transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('gldn-tab-switcher')) {
+    class GldnTabSwitcher extends HTMLElement {
+      connectedCallback() {
+        this.querySelectorAll('[role="tab"]').forEach((tab) => {
+          tab.addEventListener('click', () => this.#activate(tab));
+          tab.addEventListener('keydown', (e) => this.#onKeydown(e, tab));
+        });
+      }
+
+      #activate(activeTab) {
+        const tabs = Array.from(this.querySelectorAll('[role="tab"]'));
+        const panels = Array.from(this.querySelectorAll('[role="tabpanel"]'));
+
+        tabs.forEach((tab, i) => {
+          const isActive = tab === activeTab;
+          tab.classList.toggle('is-active', isActive);
+          tab.setAttribute('aria-selected', isActive);
+          tab.tabIndex = isActive ? 0 : -1;
+
+          const panel = panels[i];
+          if (panel) {
+            panel.classList.toggle('is-active', isActive);
+            panel.hidden = !isActive;
+          }
+        });
+
+        activeTab.focus();
+      }
+
+      #onKeydown(e, tab) {
+        const tabs = Array.from(this.querySelectorAll('[role="tab"]'));
+        const idx = tabs.indexOf(tab);
+
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.#activate(tabs[(idx + 1) % tabs.length]);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.#activate(tabs[(idx - 1 + tabs.length) % tabs.length]);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          this.#activate(tabs[0]);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          this.#activate(tabs[tabs.length - 1]);
+        }
+      }
+    }
+
+    customElements.define('gldn-tab-switcher', GldnTabSwitcher);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Dynamic Collections",
+  "tag": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    {
+      "type": "range",
+      "id": "items_per_row",
+      "label": "Columns (desktop)",
+      "min": 3, "max": 6, "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    { "type": "header", "content": "Padding" },
+    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "group",
+      "name": "Tab group",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label" },
+        { "type": "text", "id": "section_eyebrow", "label": "Panel eyebrow" },
+        { "type": "text", "id": "section_title", "label": "Panel title" }
+      ]
+    },
+    {
+      "type": "item",
+      "name": "Collection item",
+      "settings": [
+        { "type": "text", "id": "group_id", "label": "Tab group ID", "info": "Must match the tab group block ID this item belongs to" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle" },
+        { "type": "text", "id": "cta_label", "label": "Hover CTA label" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic Collections",
+      "category": "Collections",
+      "blocks": [
+        { "type": "group" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}
