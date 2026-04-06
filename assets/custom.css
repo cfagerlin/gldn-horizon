@@ -1,3 +1,14 @@
+/* ============================================================
+   GLDN font imports
+   @import must appear before all other rules.
+   freight-sans-pro: Adobe Typekit (kit hhl5rnk) — body font
+   Spectral:         Google Fonts — heading font (wt 200/300)
+   Raleway:          Google Fonts — navigation/subheading (wt 400/700/900)
+   ============================================================ */
+@import url("https://use.typekit.net/hhl5rnk.css");
+@import url("https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;1,200&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Raleway:400,700,900&display=swap");
+
 /**
  * custom.css — GLDN extension layer entry point
  *
@@ -166,6 +177,53 @@
     background-color: #ebebeb;
     color: #808080;
   }
+}
+
+/* ============================================================
+   GLDN typography — override Horizon's CSS custom properties
+   Horizon sets --font-*--family/weight/style from font_picker
+   settings in snippets/theme-styles-variables.liquid. We override
+   here to inject our custom fonts while keeping fallback stacks.
+
+   Body:       freight-sans-pro (Typekit) — wt 300, 16px, ls 0.01em, lh 1.5
+   Heading:    Spectral (Google) — wt 200, ls -0.02em, lh 1.14
+   Subheading: Raleway (Google) — wt 400, uppercase, ls 0.07em
+   ============================================================ */
+:root {
+  --font-body--family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  --font-body--weight: 300;
+  --font-body--style: normal;
+
+  --font-heading--family: 'Spectral', Georgia, serif;
+  --font-heading--weight: 200;
+  --font-heading--style: normal;
+  --font-heading--spacing: -0.02em;
+  --font-h1--spacing: -0.02em;
+  --font-h2--spacing: -0.02em;
+  --font-h3--spacing: -0.02em;
+  --font-h4--spacing: -0.02em;
+
+  --font-subheading--family: 'Raleway', 'Work Sans', sans-serif;
+  --font-subheading--weight: 400;
+  --font-subheading--style: normal;
+}
+
+/* Body: 16px base, 1.5 line-height, 0.01em letter-spacing */
+body {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  font-weight: 300;
+}
+
+/* Navigation uses Raleway uppercase */
+.header__nav,
+.header__nav a,
+[class*='header__menu'] {
+  font-family: var(--font-subheading--family);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
 }
 
 /* ============================================================
