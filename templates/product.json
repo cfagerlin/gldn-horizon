@@ -231,7 +231,7 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["add-to-cart", "accelerated-checkout"]
+              "block_order": []
             },
             "gift_note": {
               "type": "custom-gift-note",

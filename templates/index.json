@@ -142,10 +142,10 @@
               }
             }
           },
-          "block_order": ["title"]
+          "block_order": []
         }
       },
-      "block_order": ["link"]
+      "block_order": []
     },
     "gldn_home_anatomy": {
       "type": "custom-home-anatomy",
