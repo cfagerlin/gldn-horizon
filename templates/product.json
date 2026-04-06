@@ -303,7 +303,7 @@
                     "text_details": {
                       "type": "text",
                       "settings": {
-                        "text": "{{ closest.product.metafields.custom_fields.product_specs }}",
+                        "text": "",
                         "width": "100%",
                         "type_preset": "rte"
                       }
