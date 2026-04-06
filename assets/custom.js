@@ -6,4 +6,6 @@
  * in their own custom-*.js modules imported below.
  */
 
-import './custom-header-state.js';
+// custom-header-state.js is loaded via sections/custom-header-states.liquid
+// (a header-group section) so it appears on every page without a core file edit.
+// Add other module imports below as features are built.

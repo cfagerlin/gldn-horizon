@@ -1,0 +1,198 @@
+{% comment %}
+  sections/custom-cart-extras.liquid
+  GLDN — Cart Extras
+
+  Renders between the main cart section and "You may also like" product list.
+  Contains:
+    1. Cart order note / gift message (Shopify cart.note → gift wrap)
+    2. EcoCart environmental impact widget (third-party app mount point)
+    3. Recharge subscription widget stub (third-party app mount point)
+
+  Third-party widgets:
+  - EcoCart: requires EcoCart app. Widget mounts via their JS into #ecocart-widget.
+  - Recharge: requires Recharge Subscriptions app. Widget mounts via their JS.
+    The mount point accepts any Recharge JS injection targeting [data-recharge-cart].
+
+  Toggle each widget on/off via schema settings so inactive apps leave no empty
+  space in the cart.
+{% endcomment %}
+
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style custom-cart-extras"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  {%- if section.settings.show_order_note -%}
+    <div class="custom-cart-extras__note">
+      {%- if section.settings.order_note_heading != blank -%}
+        <h2 class="custom-cart-extras__note-heading">{{ section.settings.order_note_heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.order_note_description != blank -%}
+        <p class="custom-cart-extras__note-description">{{ section.settings.order_note_description | escape }}</p>
+      {%- endif -%}
+      <label class="custom-cart-extras__note-label" for="cart-note-{{ section.id }}">
+        {{ section.settings.order_note_label | default: 'Add a note' | escape }}
+      </label>
+      <textarea
+        class="field__input custom-cart-extras__note-textarea"
+        id="cart-note-{{ section.id }}"
+        name="note"
+        form="cart"
+        placeholder="{{ section.settings.order_note_placeholder | default: 'Special instructions for your order…' | escape }}"
+        rows="3"
+      >{{ cart.note }}</textarea>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.show_ecocart -%}
+    <div class="custom-cart-extras__ecocart">
+      {%- if section.settings.ecocart_heading != blank -%}
+        <p class="custom-cart-extras__widget-label">{{ section.settings.ecocart_heading | escape }}</p>
+      {%- endif -%}
+      {{- '' -}}
+      {{- '<!-- EcoCart widget mount point. EcoCart app injects here. -->' -}}
+      <div
+        id="ecocart-widget"
+        data-ecocart-widget
+        aria-live="polite"
+      ></div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.show_recharge -%}
+    <div class="custom-cart-extras__recharge">
+      {%- if section.settings.recharge_heading != blank -%}
+        <p class="custom-cart-extras__widget-label">{{ section.settings.recharge_heading | escape }}</p>
+      {%- endif -%}
+      {{- '' -}}
+      {{- '<!-- Recharge Subscriptions widget mount point. -->' -}}
+      <div
+        data-recharge-cart
+        aria-live="polite"
+      >
+        {%- comment -%}
+          The Recharge app injects subscription upsell or upgrade widgets here.
+          See Recharge docs: https://support.rechargepayments.com
+          Theme integration: add data-recharge-cart to any container and Recharge
+          will populate it via their global JS.
+        {%- endcomment -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .custom-cart-extras {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-xl);
+  }
+
+  /* ── Order note ── */
+  .custom-cart-extras__note-heading {
+    margin: 0 0 var(--gap-xs);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .custom-cart-extras__note-description {
+    margin: 0 0 var(--gap-sm);
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  .custom-cart-extras__note-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-block-end: var(--gap-2xs);
+  }
+
+  .custom-cart-extras__note-textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical; /* stylelint-disable-line */
+  }
+
+  /* ── Widget labels ── */
+  .custom-cart-extras__widget-label {
+    margin: 0 0 var(--gap-xs);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  /* ── EcoCart ── */
+  .custom-cart-extras__ecocart {
+    border-block-start: 1px solid var(--color-border);
+    padding-block-start: var(--gap-xl);
+  }
+
+  /* ── Recharge ── */
+  .custom-cart-extras__recharge {
+    border-block-start: 1px solid var(--color-border);
+    padding-block-start: var(--gap-xl);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart Extras",
+  "tag": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    { "type": "header", "content": "Padding" },
+    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 32 },
+
+    { "type": "header", "content": "Order note / gift message" },
+    { "type": "checkbox", "id": "show_order_note", "label": "Show order note field", "default": true },
+    { "type": "text", "id": "order_note_heading", "label": "Heading", "default": "Add a note to your order" },
+    { "type": "text", "id": "order_note_description", "label": "Description" },
+    { "type": "text", "id": "order_note_label", "label": "Input label", "default": "Order note" },
+    { "type": "text", "id": "order_note_placeholder", "label": "Placeholder", "default": "Special instructions, gift messages, or requests…" },
+
+    { "type": "header", "content": "EcoCart widget" },
+    {
+      "type": "checkbox",
+      "id": "show_ecocart",
+      "label": "Show EcoCart widget",
+      "default": false,
+      "info": "Requires the EcoCart app to be installed. The app's JS populates the #ecocart-widget div."
+    },
+    { "type": "text", "id": "ecocart_heading", "label": "Section label", "default": "Climate-conscious checkout" },
+
+    { "type": "header", "content": "Recharge subscriptions widget" },
+    {
+      "type": "checkbox",
+      "id": "show_recharge",
+      "label": "Show Recharge widget",
+      "default": false,
+      "info": "Requires the Recharge Subscriptions app. The app's JS populates the [data-recharge-cart] div."
+    },
+    { "type": "text", "id": "recharge_heading", "label": "Section label", "default": "Subscribe & save" }
+  ],
+  "presets": [
+    {
+      "name": "Cart Extras",
+      "category": "Cart"
+    }
+  ]
+}
+{% endschema %}

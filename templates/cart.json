@@ -64,6 +64,25 @@
         "padding-block-end": 0
       }
     },
+    "custom_cart_extras": {
+      "type": "custom-cart-extras",
+      "name": "Cart Extras",
+      "settings": {
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 32,
+        "show_order_note": true,
+        "order_note_heading": "Add a note to your order",
+        "order_note_description": "",
+        "order_note_label": "Order note",
+        "order_note_placeholder": "Special instructions, gift messages, or requests…",
+        "show_ecocart": false,
+        "ecocart_heading": "Climate-conscious checkout",
+        "show_recharge": false,
+        "recharge_heading": "Subscribe & save"
+      }
+    },
     "product_list_NNFgcy": {
       "type": "product-list",
       "blocks": {
@@ -261,6 +280,7 @@
   },
   "order": [
     "cart-section",
+    "custom_cart_extras",
     "product_list_NNFgcy"
   ]
 }

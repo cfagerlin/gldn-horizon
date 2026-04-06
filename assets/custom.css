@@ -45,3 +45,73 @@
 /* ============================================================
    Homepage: How It Works carousel (custom-how-it-works)
    ============================================================ */
+
+/* ============================================================
+   Header — 3-state colour system
+   Driven by data-gldn-state="normal|hover|scroll" on #header-component
+   set by assets/custom-header-state.js.
+   Colour values are CSS custom properties injected by
+   sections/custom-header-states.liquid (header group section).
+   ============================================================ */
+
+/*
+ * Apply transitions to both header rows so state changes animate.
+ * Only when motion is acceptable.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  #header-component .header__row {
+    transition:
+      background-color var(--gldn-header-transition, 200ms ease),
+      color var(--gldn-header-transition, 200ms ease);
+  }
+}
+
+/*
+ * Normal state — transparent header on hero pages.
+ * Only override when the section has set a non-zero opacity,
+ * signalled by --gldn-header-normal-opacity being defined.
+ * When opacity is 0 Horizon's own transparent-header logic takes over.
+ */
+#header-component[data-gldn-state='normal'] .header__row {
+  background-color: rgba(
+    var(--gldn-header-normal-bg-rgb, 255 255 255),
+    var(--gldn-header-normal-opacity, 0)
+  );
+  color: var(--gldn-header-normal-text, currentColor);
+}
+
+/*
+ * Hover state — shown when pointer/focus is inside the header
+ * and the page is NOT scrolled.
+ */
+#header-component[data-gldn-state='hover'] .header__row {
+  background-color: rgba(
+    var(--gldn-header-hover-bg-rgb, 255 255 255),
+    var(--gldn-header-hover-opacity, 0.95)
+  );
+  color: var(--gldn-header-hover-text, inherit);
+}
+
+/*
+ * Scroll state — shown whenever window.scrollY > 10px.
+ * Takes priority over hover.
+ */
+#header-component[data-gldn-state='scroll'] .header__row {
+  background-color: rgba(
+    var(--gldn-header-scroll-bg-rgb, 255 255 255),
+    var(--gldn-header-scroll-opacity, 1)
+  );
+  color: var(--gldn-header-scroll-text, inherit);
+}
+
+/*
+ * Propagate text colour to icon fills and link colours inside each row.
+ * Horizon uses currentColor throughout so this cascades automatically.
+ */
+#header-component[data-gldn-state] .header__row svg {
+  fill: currentColor;
+}
+
+/* ============================================================
+   Cart extras (custom-cart-extras)
+   ============================================================ */

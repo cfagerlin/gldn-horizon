@@ -1,0 +1,149 @@
+{% comment %}
+  sections/custom-header-states.liquid
+  GLDN — Header colour states (normal / hover / scroll)
+
+  PURPOSE
+  -------
+  Injects CSS custom properties that drive header background and text colour
+  for each of the three GLDN header states. The actual state toggling is done
+  by assets/custom-header-state.js which sets data-gldn-state on #header-component.
+
+  SETUP (one-time, Theme Editor)
+  -----
+  1. Theme Editor → Header section group → Add section → "GLDN Header States"
+  2. Configure the three colour states.
+  3. This section then renders on every page automatically (header group).
+
+  This section renders NO visible HTML — only a <style> block + the JS loader.
+  It does NOT modify sections/header.liquid.
+
+  COLOUR FORMAT
+  -------------
+  Background colours use separate RGB + opacity values so that semi-transparent
+  headers work correctly (matching legacy header_color_opacity behaviour).
+  Text colours are applied as solid values.
+{% endcomment %}
+
+{%- liquid
+  assign normal_bg_rgb = section.settings.normal_bg | color_to_rgb
+  assign normal_opacity = section.settings.normal_opacity | divided_by: 100.0
+  assign scroll_bg_rgb = section.settings.scroll_bg | color_to_rgb
+  assign scroll_opacity = section.settings.scroll_opacity | divided_by: 100.0
+  assign hover_bg_rgb = section.settings.hover_bg | color_to_rgb
+  assign hover_opacity = section.settings.hover_opacity | divided_by: 100.0
+-%}
+
+<style>
+  /* ── GLDN Header State CSS custom properties ─────────────────────────── */
+  :root {
+    --gldn-header-normal-bg-rgb:  {{ normal_bg_rgb }};
+    --gldn-header-normal-opacity: {{ normal_opacity }};
+    --gldn-header-normal-text:    {{ section.settings.normal_text }};
+
+    --gldn-header-scroll-bg-rgb:  {{ scroll_bg_rgb }};
+    --gldn-header-scroll-opacity: {{ scroll_opacity }};
+    --gldn-header-scroll-text:    {{ section.settings.scroll_text }};
+
+    --gldn-header-hover-bg-rgb:   {{ hover_bg_rgb }};
+    --gldn-header-hover-opacity:  {{ hover_opacity }};
+    --gldn-header-hover-text:     {{ section.settings.hover_text }};
+
+    --gldn-header-transition:     {{ section.settings.transition_speed }}ms ease;
+  }
+</style>
+
+<script src="{{ 'custom-header-state.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "GLDN Header States",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Controls header background and text colour for 3 states. Loaded via the header section group so it applies on every page. See assets/custom-header-state.js + assets/custom.css for CSS rules."
+    },
+    {
+      "type": "header",
+      "content": "Normal state"
+    },
+    {
+      "type": "color",
+      "id": "normal_bg",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "normal_opacity",
+      "label": "Background opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 0,
+      "info": "0 = fully transparent (use Horizon transparent header settings); 100 = fully opaque"
+    },
+    {
+      "type": "color",
+      "id": "normal_text",
+      "label": "Text / icon colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Hover state"
+    },
+    {
+      "type": "color",
+      "id": "hover_bg",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "hover_opacity",
+      "label": "Background opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 95
+    },
+    {
+      "type": "color",
+      "id": "hover_text",
+      "label": "Text / icon colour",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Scroll state"
+    },
+    {
+      "type": "color",
+      "id": "scroll_bg",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "scroll_opacity",
+      "label": "Background opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "scroll_text",
+      "label": "Text / icon colour",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Transition"
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "Transition speed",
+      "min": 0, "max": 500, "step": 50, "unit": "ms",
+      "default": 200
+    }
+  ]
+}
+{% endschema %}
