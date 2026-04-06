@@ -1,0 +1,413 @@
+{% comment %}
+  blocks/custom-gift-note.liquid
+  GLDN — Gift Note block
+
+  Toggle-based gift note with To / From / Message fields.
+  Message field has a 60-character hard limit with live counter.
+  All three fields are joined into a single "Gift Note" line item property
+  only when the toggle is checked. If unchecked, nothing is submitted.
+
+  Conditionally shown based on optional product tag filter.
+
+  Maps from legacy: sections/pdp_gift_and_requests.liquid (gift block type)
+{% endcomment %}
+
+{%- liquid
+  assign show_block = true
+  if block.settings.required_tag != blank
+    unless product.tags contains block.settings.required_tag
+      assign show_block = false
+    endunless
+  endif
+  assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id
+  assign toggle_id = 'gift-toggle-' | append: block.id
+  assign fields_id = 'gift-fields-' | append: block.id
+-%}
+
+{%- if show_block -%}
+  <gldn-gift-note
+    class="custom-gift-note spacing-style"
+    style="{% render 'spacing-style', settings: block.settings %}"
+    {{ block.shopify_attributes }}
+  >
+    <div class="custom-gift-note__toggle-row">
+      <input
+        type="checkbox"
+        id="{{ toggle_id }}"
+        class="custom-gift-note__checkbox"
+        aria-expanded="false"
+        aria-controls="{{ fields_id }}"
+      >
+      <label class="custom-gift-note__toggle-label" for="{{ toggle_id }}">
+        <span class="custom-gift-note__toggle-track" aria-hidden="true">
+          <span class="custom-gift-note__toggle-knob"></span>
+        </span>
+        {{ block.settings.toggle_label | default: 'This is a gift' | escape }}
+      </label>
+    </div>
+
+    <div
+      id="{{ fields_id }}"
+      class="custom-gift-note__fields"
+      hidden
+    >
+      {%- if block.settings.description != blank -%}
+        <p class="custom-gift-note__description">{{ block.settings.description | escape }}</p>
+      {%- endif -%}
+
+      <div class="custom-gift-note__row">
+        <div class="custom-gift-note__field">
+          <label class="custom-gift-note__label" for="gift-to-{{ block.id }}">
+            {{ block.settings.to_label | default: 'To' | escape }}
+          </label>
+          <input
+            type="text"
+            id="gift-to-{{ block.id }}"
+            class="field__input custom-gift-note__input"
+            placeholder="{{ block.settings.to_placeholder | default: 'Receiver name' | escape }}"
+            data-gift-field="to"
+            autocomplete="off"
+          >
+        </div>
+        <div class="custom-gift-note__field">
+          <label class="custom-gift-note__label" for="gift-from-{{ block.id }}">
+            {{ block.settings.from_label | default: 'From' | escape }}
+          </label>
+          <input
+            type="text"
+            id="gift-from-{{ block.id }}"
+            class="field__input custom-gift-note__input"
+            placeholder="{{ block.settings.from_placeholder | default: 'Your name' | escape }}"
+            data-gift-field="from"
+            autocomplete="off"
+          >
+        </div>
+      </div>
+
+      <div class="custom-gift-note__field">
+        <label class="custom-gift-note__label" for="gift-message-{{ block.id }}">
+          {{ block.settings.message_label | default: 'Message' | escape }}
+        </label>
+        <div class="custom-gift-note__textarea-wrap">
+          <textarea
+            id="gift-message-{{ block.id }}"
+            class="field__input custom-gift-note__textarea"
+            placeholder="{{ block.settings.message_placeholder | default: 'Write your message here…' | escape }}"
+            maxlength="60"
+            rows="3"
+            data-gift-field="message"
+            aria-describedby="gift-counter-{{ block.id }}"
+          ></textarea>
+          <span
+            id="gift-counter-{{ block.id }}"
+            class="custom-gift-note__counter"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span data-counter>0</span>/60
+          </span>
+        </div>
+      </div>
+
+      {{- '' -}}
+      {{- '<!-- Hidden input holds joined value, submitted to cart -->
+' -}}
+      <input
+        type="hidden"
+        id="gift-joined-{{ block.id }}"
+        form="{{ product_form_id }}"
+        data-gift-joined
+      >
+    </div>
+  </gldn-gift-note>
+{%- endif -%}
+
+{% stylesheet %}
+  gldn-gift-note {
+    display: block;
+  }
+
+  .custom-gift-note__toggle-row {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+  }
+
+  .custom-gift-note__checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .custom-gift-note__toggle-label {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    user-select: none;
+  }
+
+  .custom-gift-note__toggle-track {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-gift-note__checkbox:checked + .custom-gift-note__toggle-label .custom-gift-note__toggle-track {
+    background: var(--color-foreground);
+  }
+
+  .custom-gift-note__toggle-knob {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 2px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease;
+  }
+
+  .custom-gift-note__checkbox:checked + .custom-gift-note__toggle-label .custom-gift-note__toggle-knob {
+    transform: translateX(16px);
+  }
+
+  .custom-gift-note__checkbox:focus-visible + .custom-gift-note__toggle-label .custom-gift-note__toggle-track {
+    outline: var(--focus-outline-width, 2px) solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .custom-gift-note__fields {
+    margin-block-start: var(--gap-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  .custom-gift-note__fields[hidden] { display: none; }
+
+  .custom-gift-note__description {
+    margin: 0;
+    font-size: 0.8125rem;
+    opacity: 0.65;
+    line-height: 1.4;
+  }
+
+  .custom-gift-note__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap-sm);
+  }
+
+  @media screen and (max-width: 480px) {
+    .custom-gift-note__row { grid-template-columns: 1fr; }
+  }
+
+  .custom-gift-note__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+  }
+
+  .custom-gift-note__label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .custom-gift-note__input,
+  .custom-gift-note__textarea {
+    width: 100%;
+  }
+
+  .custom-gift-note__textarea-wrap {
+    position: relative;
+  }
+
+  .custom-gift-note__textarea {
+    min-height: 80px;
+    padding-block-end: calc(var(--padding-sm, 8px) * 3);
+    resize: vertical; /* stylelint-disable-line */
+  }
+
+  .custom-gift-note__counter {
+    position: absolute;
+    inset-inline-end: var(--input-padding-x, 12px);
+    inset-block-end: var(--gap-xs, 6px);
+    font-size: 0.75rem;
+    font-style: italic;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-gift-note__toggle-track,
+    .custom-gift-note__toggle-knob { transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('gldn-gift-note')) {
+    class GldnGiftNote extends HTMLElement {
+      connectedCallback() {
+        this.#toggle = this.querySelector('.custom-gift-note__checkbox');
+        this.#fields = this.querySelector('.custom-gift-note__fields');
+        this.#joined = this.querySelector('[data-gift-joined]');
+        this.#counter = this.querySelector('[data-counter]');
+        this.#textarea = this.querySelector('.custom-gift-note__textarea');
+
+        this.#toggle?.addEventListener('change', () => this.#onToggle());
+        this.#textarea?.addEventListener('input', () => this.#onMessageInput());
+        this.#fields?.querySelectorAll('[data-gift-field]').forEach((el) => {
+          el.addEventListener('input', () => this.#syncJoined());
+        });
+      }
+
+      #toggle = null;
+      #fields = null;
+      #joined = null;
+      #counter = null;
+      #textarea = null;
+
+      #onToggle() {
+        const open = this.#toggle.checked;
+        this.#toggle.setAttribute('aria-expanded', open);
+        this.#fields.hidden = !open;
+
+        if (open) {
+          this.#fields.querySelector('input, textarea')?.focus();
+        } else {
+          // Clear fields and hidden input when dismissed
+          this.#fields.querySelectorAll('input, textarea').forEach((el) => { el.value = ''; });
+          if (this.#counter) this.#counter.textContent = '0';
+          if (this.#joined) {
+            this.#joined.value = '';
+            this.#joined.removeAttribute('name');
+          }
+        }
+      }
+
+      #onMessageInput() {
+        if (this.#counter && this.#textarea) {
+          this.#counter.textContent = this.#textarea.value.length;
+        }
+        this.#syncJoined();
+      }
+
+      #syncJoined() {
+        if (!this.#joined) return;
+
+        const to = this.querySelector('[data-gift-field="to"]')?.value?.trim();
+        const from = this.querySelector('[data-gift-field="from"]')?.value?.trim();
+        const msg = this.querySelector('[data-gift-field="message"]')?.value?.trim();
+
+        const parts = [];
+        if (to) parts.push('To: ' + to);
+        if (from) parts.push('From: ' + from);
+        if (msg) parts.push(msg);
+
+        const value = parts.join(' | ');
+        this.#joined.value = value;
+        this.#joined.name = value ? 'properties[Gift Note]' : '';
+      }
+    }
+
+    customElements.define('gldn-gift-note', GldnGiftNote);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Gift note",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "toggle_label",
+      "label": "Toggle label",
+      "default": "This is a gift"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "default": "We'll hand-write your note on a notecard included in the package."
+    },
+    {
+      "type": "text",
+      "id": "to_label",
+      "label": "\"To\" field label",
+      "default": "To"
+    },
+    {
+      "type": "text",
+      "id": "to_placeholder",
+      "label": "\"To\" placeholder",
+      "default": "Receiver name"
+    },
+    {
+      "type": "text",
+      "id": "from_label",
+      "label": "\"From\" field label",
+      "default": "From"
+    },
+    {
+      "type": "text",
+      "id": "from_placeholder",
+      "label": "\"From\" placeholder",
+      "default": "Your name"
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Message field label",
+      "default": "Message (60 characters max)"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Message placeholder",
+      "default": "Happy Birthday! Love, Sam"
+    },
+    {
+      "type": "text",
+      "id": "required_tag",
+      "label": "Show only for products tagged",
+      "info": "Leave blank to show on all products"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0, "max": 60, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0, "max": 60, "step": 1, "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift note",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,102 @@
+{% comment %}
+  sections/custom-okendo-reviews.liquid
+  GLDN — Okendo Reviews Widget
+
+  Placeholder section that embeds the Okendo product reviews widget.
+  Requires the Okendo: Product Reviews & UGC app to be installed.
+
+  The widget renders via Okendo's standard embed script which is loaded
+  globally by the app. This section just places the mount point with the
+  correct product ID attribute.
+
+  Maps from legacy: snippets/okendo-reviews-widget.liquid
+{% endcomment %}
+
+{%- assign current_product = product -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style custom-okendo-reviews"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  {%- if section.settings.heading != blank -%}
+    <div class="custom-okendo-reviews__head">
+      <h2 class="custom-okendo-reviews__heading">{{ section.settings.heading | escape }}</h2>
+    </div>
+  {%- endif -%}
+
+  {{- '' -}}
+  {{- '<!-- Okendo reviews widget mount point -->' -}}
+  <div
+    id="okendo-reviews-section"
+    class="custom-okendo-reviews__widget"
+    data-oke-reviews-product-listing-rating
+    data-oke-widget
+  >
+    {{- '' -}}
+    {{- '<!-- Okendo widget renders here. App must be installed & active. -->' -}}
+  </div>
+
+  {%- comment -%}
+    Okendo widget attributes reference:
+    - data-oke-widget              : Mount point for the full reviews widget
+    - data-oke-reviews-product-listing-rating : Product star rating display
+    The Okendo app injects its own script tag via the theme's layout file.
+    No additional script tag is needed here.
+  {%- endcomment -%}
+</div>
+
+{% stylesheet %}
+  .custom-okendo-reviews__head {
+    margin-block-end: var(--gap-xl);
+  }
+
+  .custom-okendo-reviews__heading {
+    margin: 0;
+  }
+
+  .custom-okendo-reviews__widget {
+    min-height: 100px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Okendo Reviews",
+  "tag": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    { "type": "header", "content": "Padding" },
+    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 60 }
+  ],
+  "presets": [
+    {
+      "name": "Okendo Reviews",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

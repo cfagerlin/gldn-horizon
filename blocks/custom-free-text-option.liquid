@@ -1,61 +1,139 @@
 {% comment %}
   blocks/custom-free-text-option.liquid
-  GLDN — Free-text product option block
+  GLDN — Free-text product option (personalization / engraving)
 
-  Renders a labeled text input for personalizable product options
-  (e.g. engraving, name, custom message). Submitted value is appended
-  to the line item properties on add-to-cart.
+  Renders a labeled text input that submits as a Shopify line item property.
+  Uses Horizon's field__input styling for visual consistency.
+  Live character counter shown when max_length is set.
+  Form-associated so it works anywhere in the product template.
 
   Schema settings:
-  - label       : Input label shown to the customer
-  - placeholder : Placeholder text inside the input
-  - required    : Whether the field must be filled before adding to cart
+  - label       : Line item property name (e.g. "Engraving", "Personalization")
+  - placeholder : Input placeholder text
+  - description : Optional helper text below label
+  - required    : Whether the field must be filled before add-to-cart
   - max_length  : Character limit (0 = no limit)
 {% endcomment %}
 
-<div class="custom-free-text-option" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
-  {%- assign field_id = 'free-text-' | append: block.id -%}
-  {%- assign field_name = 'properties[' | append: block.settings.label | append: ']' -%}
+{%- liquid
+  assign field_id = 'free-text-' | append: block.id
+  assign property_name = 'properties[' | append: block.settings.label | append: ']'
+  assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id
+  assign show_counter = false
+  if block.settings.max_length > 0
+    assign show_counter = true
+  endif
+-%}
 
+<div
+  class="custom-free-text-option spacing-style"
+  style="{% render 'spacing-style', settings: block.settings %}"
+  {{ block.shopify_attributes }}
+>
   <label class="custom-free-text-option__label" for="{{ field_id }}">
-    {{- block.settings.label -}}
+    {{- block.settings.label | escape -}}
     {%- if block.settings.required -%}
       <span class="custom-free-text-option__required" aria-hidden="true"> *</span>
     {%- endif -%}
   </label>
 
-  <input
-    class="custom-free-text-option__input"
-    type="text"
-    id="{{ field_id }}"
-    name="{{ field_name }}"
-    placeholder="{{ block.settings.placeholder | escape }}"
-    {%- if block.settings.required %} required aria-required="true"{% endif %}
-    {%- if block.settings.max_length > 0 %} maxlength="{{ block.settings.max_length }}"{% endif %}
-  >
-
-  {%- if block.settings.max_length > 0 -%}
-    <p class="custom-free-text-option__hint">
-      {{ 'products.free_text_option.character_limit_html' | t: limit: block.settings.max_length }}
-    </p>
+  {%- if block.settings.description != blank -%}
+    <p class="custom-free-text-option__description">{{ block.settings.description | escape }}</p>
   {%- endif -%}
+
+  <div class="custom-free-text-option__field-wrap">
+    <input
+      class="field__input custom-free-text-option__input"
+      type="text"
+      id="{{ field_id }}"
+      name="{{ property_name }}"
+      form="{{ product_form_id }}"
+      placeholder="{{ block.settings.placeholder | escape }}"
+      {%- if block.settings.required %} required aria-required="true"{% endif %}
+      {%- if show_counter %} maxlength="{{ block.settings.max_length }}"{% endif %}
+      {%- if show_counter %}
+        oninput="this.nextElementSibling.querySelector('[data-count]').textContent = this.value.length"
+        aria-describedby="{{ field_id }}-counter"
+      {%- endif %}
+    >
+    {%- if show_counter -%}
+      <span
+        id="{{ field_id }}-counter"
+        class="custom-free-text-option__counter"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span data-count>0</span>/{{ block.settings.max_length }}
+      </span>
+    {%- endif -%}
+  </div>
 </div>
+
+{% stylesheet %}
+  .custom-free-text-option__label {
+    display: block;
+    margin-block-end: var(--gap-2xs, 4px);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .custom-free-text-option__required {
+    color: var(--color-error, #c00);
+  }
+
+  .custom-free-text-option__description {
+    margin: 0 0 var(--gap-xs, 6px);
+    font-size: 0.8125rem;
+    opacity: 0.7;
+    line-height: 1.4;
+  }
+
+  .custom-free-text-option__field-wrap {
+    position: relative;
+  }
+
+  .custom-free-text-option__input {
+    width: 100%;
+  }
+
+  .custom-free-text-option__counter {
+    position: absolute;
+    inset-inline-end: var(--input-padding-x, 12px);
+    inset-block-end: var(--gap-xs, 6px);
+    font-size: 0.75rem;
+    font-style: italic;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Extra bottom padding on input when counter is showing */
+  .custom-free-text-option__field-wrap:has(.custom-free-text-option__counter) .custom-free-text-option__input {
+    padding-block-end: calc(var(--padding-sm, 8px) * 3);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "Free text option",
-  "target": "section",
+  "tag": null,
   "settings": [
     {
       "type": "text",
       "id": "label",
-      "label": "Label",
-      "default": "Personalization"
+      "label": "Label / property name",
+      "default": "Personalization",
+      "info": "This becomes the Shopify line item property key (e.g. 'Engraving', 'Name')"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Helper text",
+      "info": "Optional note shown below the label"
     },
     {
       "type": "text",
       "id": "placeholder",
-      "label": "Placeholder text",
+      "label": "Placeholder",
       "default": "Enter your text here"
     },
     {
@@ -70,9 +148,33 @@
       "label": "Character limit",
       "min": 0,
       "max": 200,
-      "step": 10,
+      "step": 5,
       "default": 0,
-      "info": "Set to 0 for no limit"
+      "info": "Set to 0 for no limit. Counter shown when limit is active."
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0, "max": 60, "step": 1, "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0, "max": 60, "step": 1, "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Free text option",
+      "category": "Product"
     }
   ]
 }

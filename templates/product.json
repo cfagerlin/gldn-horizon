@@ -7,7 +7,7 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
- {
+{
   "sections": {
     "main": {
       "type": "product-information",
@@ -19,7 +19,7 @@
             "media_presentation": "grid",
             "media_columns": "two",
             "image_gap": 4,
-            "large_first_image": false,
+            "large_first_image": true,
             "icons_style": "arrow",
             "slideshow_controls_style": "counter",
             "slideshow_mobile_controls_style": "dots",
@@ -50,7 +50,7 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "details_position": "flex-start",
-            "gap": 28,
+            "gap": 20,
             "sticky_details_desktop": true,
             "inherit_color_scheme": true,
             "color_scheme": "scheme-1",
@@ -67,7 +67,7 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "group_icgrde": {
+            "group_header": {
               "type": "group",
               "name": "Header",
               "settings": {
@@ -80,7 +80,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "gap": 8,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -107,9 +107,9 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_xpVMaM": {
+                "product_title": {
                   "type": "text",
-                  "name": "t:names.title",
+                  "name": "Title",
                   "settings": {
                     "text": "<h1>{{ closest.product.title }}</h1>",
                     "width": "fit-content",
@@ -117,7 +117,7 @@
                     "alignment": "left",
                     "type_preset": "h3",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "font_size": "",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
@@ -133,7 +133,7 @@
                   },
                   "blocks": {}
                 },
-                "price_tVjtKg": {
+                "product_price": {
                   "type": "price",
                   "settings": {
                     "show_sale_price_first": true,
@@ -157,27 +157,27 @@
                 }
               },
               "block_order": [
-                "text_xpVMaM",
-                "price_tVjtKg"
+                "product_title",
+                "product_price"
               ]
             },
-            "divider_VJhene": {
+            "divider_top": {
               "type": "_divider",
-              "name": "t:names.divider",
+              "name": "Divider",
               "settings": {
                 "thickness": 1,
                 "corner_radius": "square",
                 "width_percent": 100,
-                "padding-block-start": 0,
-                "padding-block-end": 0
+                "padding-block-start": 4,
+                "padding-block-end": 4
               },
               "blocks": {}
             },
-            "variant_picker_R3rGDr": {
+            "variant_picker": {
               "type": "variant-picker",
               "settings": {
                 "variant_style": "buttons",
-                "show_swatches": false,
+                "show_swatches": true,
                 "alignment": "left",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -186,13 +186,25 @@
               },
               "blocks": {}
             },
-            "buy_buttons_eYQEYi": {
+            "personalization": {
+              "type": "custom-free-text-option",
+              "settings": {
+                "label": "Personalization",
+                "description": "Enter the text you'd like engraved or added to your piece.",
+                "placeholder": "e.g. Always & Forever",
+                "required": false,
+                "max_length": 30,
+                "padding-block-start": 4,
+                "padding-block-end": 4
+              }
+            },
+            "buy_buttons": {
               "type": "buy-buttons",
               "settings": {
                 "stacking": true,
                 "show_pickup_availability": false,
                 "gift_card_form": true,
-                "padding-block-start": 0,
+                "padding-block-start": 4,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -219,9 +231,25 @@
                   "blocks": {}
                 }
               },
-              "block_order": []
+              "block_order": ["quantity", "add-to-cart", "accelerated-checkout"]
             },
-            "text_aEtTtq": {
+            "gift_note": {
+              "type": "custom-gift-note",
+              "settings": {
+                "toggle_label": "This is a gift",
+                "description": "We'll hand-write your note on a notecard included in the package.",
+                "to_label": "To",
+                "to_placeholder": "Receiver name",
+                "from_label": "From",
+                "from_placeholder": "Your name",
+                "message_label": "Message (60 characters max)",
+                "message_placeholder": "Happy Birthday! Love, Sam",
+                "required_tag": "",
+                "padding-block-start": 8,
+                "padding-block-end": 8
+              }
+            },
+            "product_description": {
               "type": "text",
               "name": "Product description",
               "settings": {
@@ -240,20 +268,121 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 0,
+                "padding-block-start": 8,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "details_accordion": {
+              "type": "accordion",
+              "settings": {
+                "icon": "plus",
+                "dividers": true,
+                "type_preset": "h6",
+                "inherit_color_scheme": true,
+                "color_scheme": "scheme-1",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 8,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "row_details": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "open_by_default": false,
+                    "heading": "Product Details"
+                  },
+                  "blocks": {
+                    "text_details": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.metafields.custom_fields.product_specs }}",
+                        "width": "100%",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": ["text_details"]
+                },
+                "row_materials": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "open_by_default": false,
+                    "heading": "Materials & Care"
+                  },
+                  "blocks": {
+                    "text_materials": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.metafields.custom_fields.materials }}",
+                        "width": "100%",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": ["text_materials"]
+                },
+                "row_sizing": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "open_by_default": false,
+                    "heading": "Sizing Guide"
+                  },
+                  "blocks": {
+                    "text_sizing": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>See our <a href=\"/pages/sizing\">full sizing guide</a> for ring, bracelet, and chain measurements.</p>",
+                        "width": "100%",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": ["text_sizing"]
+                },
+                "row_returns": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "open_by_default": false,
+                    "heading": "Returns & Shipping"
+                  },
+                  "blocks": {
+                    "text_returns": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Personalized items cannot be returned. Non-personalized pieces may be returned within 30 days. See our <a href=\"/policies/refund-policy\">return policy</a> for full details.</p>",
+                        "width": "100%",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": ["text_returns"]
+                }
+              },
+              "block_order": [
+                "row_details",
+                "row_materials",
+                "row_sizing",
+                "row_returns"
+              ]
             }
           },
           "block_order": [
-            "group_icgrde",
-            "divider_VJhene",
-            "variant_picker_R3rGDr",
-            "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "group_header",
+            "divider_top",
+            "variant_picker",
+            "personalization",
+            "buy_buttons",
+            "gift_note",
+            "product_description",
+            "details_accordion"
           ]
         }
       },
@@ -268,14 +397,14 @@
         "padding-block-end": 0
       }
     },
-    "product_recommendations_qggXJq": {
+    "product_recommendations": {
       "type": "product-recommendations",
       "blocks": {
-        "text_cbcgyb": {
+        "header_text": {
           "type": "text",
-          "name": "t:names.header",
+          "name": "Header",
           "settings": {
-            "text": "<h3>You may also like </h3>",
+            "text": "<h3>You May Also Like</h3>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -297,12 +426,12 @@
           },
           "blocks": {}
         },
-        "static-product-card": {
+        "product-card": {
           "type": "_product-card",
-          "name": "t:names.product_card",
+          "name": "Product card",
           "static": true,
           "settings": {
-            "product_card_gap": 8,
+            "product_card_gap": 6,
             "inherit_color_scheme": true,
             "color_scheme": "",
             "border": "none",
@@ -315,9 +444,9 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "product_card_gallery_DNizbJ": {
+            "card_gallery": {
               "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
+              "name": "Media",
               "settings": {
                 "image_ratio": "adapt",
                 "border": "none",
@@ -331,16 +460,16 @@
               },
               "blocks": {}
             },
-            "product_title_M7MJkb": {
+            "card_title": {
               "type": "product-title",
-              "name": "t:names.product_title",
+              "name": "Title",
               "settings": {
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font_size": "0.9375rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
@@ -349,14 +478,14 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 4,
+                "padding-block-start": 6,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
               "blocks": {}
             },
-            "price_gLWgA6": {
+            "card_price": {
               "type": "price",
               "settings": {
                 "show_sale_price_first": true,
@@ -366,12 +495,12 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font_size": "0.875rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "color": "var(--color-foreground)",
-                "padding-block-start": 0,
+                "padding-block-start": 2,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -380,21 +509,21 @@
             }
           },
           "block_order": [
-            "product_card_gallery_DNizbJ",
-            "product_title_M7MJkb",
-            "price_gLWgA6"
+            "card_gallery",
+            "card_title",
+            "card_price"
           ]
         }
       },
       "block_order": [
-        "text_cbcgyb"
+        "header_text"
       ],
-      "name": "t:names.product_recommendations",
+      "name": "You may also like",
       "settings": {
         "product": "{{ closest.product }}",
         "recommendation_type": "related",
         "layout_type": "grid",
-        "carousel_on_mobile": false,
+        "carousel_on_mobile": true,
         "max_products": 4,
         "columns": 4,
         "mobile_columns": "2",
@@ -408,10 +537,22 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "okendo_reviews": {
+      "type": "custom-okendo-reviews",
+      "name": "Reviews",
+      "settings": {
+        "heading": "Customer Reviews",
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "product_recommendations",
+    "okendo_reviews"
   ]
 }
