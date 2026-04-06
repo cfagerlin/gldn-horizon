@@ -63,16 +63,7 @@
               <div class="custom-home-anatomy__media-col">
                 {%- if block.settings.image != blank -%}
                   {%- assign block_image_alt = block.settings.title | default: '' | escape -%}
-                  {{
-                    block.settings.image
-                    | image_url: width: 900
-                    | image_tag:
-                      loading: 'lazy',
-                      widths: '450, 600, 900',
-                      sizes: '(min-width: 750px) 45vw, 90vw',
-                      alt: block_image_alt,
-                      class: 'custom-home-anatomy__image'
-                  }}
+                  {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 750px) 45vw, 90vw', alt: block_image_alt, class: 'custom-home-anatomy__image' }}
                 {%- else -%}
                   {{ 'product-1' | placeholder_svg_tag: 'custom-home-anatomy__image custom-home-anatomy__placeholder' }}
                 {%- endif -%}
