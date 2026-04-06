@@ -1,0 +1,79 @@
+{% comment %}
+  blocks/custom-free-text-option.liquid
+  GLDN — Free-text product option block
+
+  Renders a labeled text input for personalizable product options
+  (e.g. engraving, name, custom message). Submitted value is appended
+  to the line item properties on add-to-cart.
+
+  Schema settings:
+  - label       : Input label shown to the customer
+  - placeholder : Placeholder text inside the input
+  - required    : Whether the field must be filled before adding to cart
+  - max_length  : Character limit (0 = no limit)
+{% endcomment %}
+
+<div class="custom-free-text-option" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- assign field_id = 'free-text-' | append: block.id -%}
+  {%- assign field_name = 'properties[' | append: block.settings.label | append: ']' -%}
+
+  <label class="custom-free-text-option__label" for="{{ field_id }}">
+    {{- block.settings.label -}}
+    {%- if block.settings.required -%}
+      <span class="custom-free-text-option__required" aria-hidden="true"> *</span>
+    {%- endif -%}
+  </label>
+
+  <input
+    class="custom-free-text-option__input"
+    type="text"
+    id="{{ field_id }}"
+    name="{{ field_name }}"
+    placeholder="{{ block.settings.placeholder | escape }}"
+    {%- if block.settings.required %} required aria-required="true"{% endif %}
+    {%- if block.settings.max_length > 0 %} maxlength="{{ block.settings.max_length }}"{% endif %}
+  >
+
+  {%- if block.settings.max_length > 0 -%}
+    <p class="custom-free-text-option__hint">
+      {{ 'products.free_text_option.character_limit_html' | t: limit: block.settings.max_length }}
+    </p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Free text option",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Personalization"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder text",
+      "default": "Enter your text here"
+    },
+    {
+      "type": "checkbox",
+      "id": "required",
+      "label": "Required field",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_length",
+      "label": "Character limit",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 0,
+      "info": "Set to 0 for no limit"
+    }
+  ]
+}
+{% endschema %}
