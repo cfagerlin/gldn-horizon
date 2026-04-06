@@ -93,7 +93,7 @@
             aria-label="{{ 'accessibility.previous_slide' | t | default: 'Previous slide' }}"
             data-carousel-prev
           >
-            {{ 'icon-arrow-left.svg' | inline_asset_content }}
+            {{ 'icon-chevron-left.svg' | inline_asset_content }}
           </button>
           <span class="custom-home-anatomy__counter" aria-hidden="true">
             <span data-carousel-current>1</span> / {{ section.blocks.size }}
@@ -103,7 +103,7 @@
             aria-label="{{ 'accessibility.next_slide' | t | default: 'Next slide' }}"
             data-carousel-next
           >
-            {{ 'icon-arrow-right.svg' | inline_asset_content }}
+            {{ 'icon-chevron-right.svg' | inline_asset_content }}
           </button>
         </div>
       {%- endif -%}
