@@ -9,11 +9,164 @@
 
 /* ============================================================
    Footer two-tone
+   Layout: left column (links/contact) 59% · right column (newsletter) flex-1
+   In the admin, place two footer sections in the footer group:
+     1. Footer (links + contact info) — assign scheme-2 or your dark scheme
+     2. Footer (newsletter) — assign scheme-3 or your light scheme
+   The footer-utilities (copyright bar) spans full width below both.
    ============================================================ */
+
+@media screen and (min-width: 990px) {
+  footer {
+    display: grid;
+    grid-template-columns: 59fr 41fr;
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+
+  /* First two section-wrappers are the left/right columns */
+  footer > .section-wrapper:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  footer > .section-wrapper:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* footer-utilities copyright bar always spans full width */
+  footer > .footer-utilities {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  /* section-background must fill its grid cell */
+  footer > .section-wrapper .section-background {
+    inset: 0;
+  }
+}
 
 /* ============================================================
    Button variants (v3–v6)
+   Usage: set style_class to "btn-v3" … "btn-v6" in section settings,
+   or add the class directly to <a>/<button> elements in rich text.
+
+   v3  Terracotta — GLDN brand accent (#b96749)
+   v4  Ghost dark — transparent with dark border; fills on hover
+   v5  Ghost light — transparent with white border; fills on hover (dark BGs)
+   v6  Muted pill  — light gray background, subdued text, smaller scale
    ============================================================ */
+
+.btn-v3 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b96749;
+  color: #fdfdfd;
+  border: 0;
+  border-radius: 0;
+  padding: 0.94em 2em;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  min-width: 240px;
+}
+
+@media (hover: hover) {
+  .btn-v3:hover {
+    background-color: #cf9d8b;
+    color: #fdfdfd;
+  }
+}
+
+.btn-v4 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: #333334;
+  border: 1px solid #333333;
+  border-radius: 0;
+  padding: 0.94em 2em;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  min-width: 240px;
+}
+
+@media (hover: hover) {
+  .btn-v4:hover {
+    background-color: #4d4d4d;
+    color: #fdfdfd;
+    border-color: #333333;
+  }
+}
+
+.btn-v5 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: #fdfdfd;
+  border: 1px solid #fdfdfd;
+  border-radius: 0;
+  padding: 0.94em 2em;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  min-width: 240px;
+}
+
+@media (hover: hover) {
+  .btn-v5:hover {
+    background-color: #fdfdfd;
+    color: #333333;
+    border-color: #fdfdfd;
+  }
+}
+
+.btn-v6 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f3f3;
+  color: #808080;
+  border: 0;
+  border-radius: 0;
+  padding: 0.94em 2em;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.6s ease;
+  min-width: 240px;
+}
+
+@media (hover: hover) {
+  .btn-v6:hover {
+    background-color: #ebebeb;
+    color: #808080;
+  }
+}
 
 /* ============================================================
    Section padding overrides
