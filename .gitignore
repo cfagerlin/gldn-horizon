@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+.env
+*.log
+.shopify/
+
+# config/settings_data.json — tracked during development so theme settings
+# are shared across the team. Remove this comment and add the line below
+# before launch to avoid overwriting live store settings on every push:
+# config/settings_data.json
