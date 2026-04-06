@@ -321,7 +321,7 @@
                     "text_materials": {
                       "type": "text",
                       "settings": {
-                        "text": "{{ closest.product.metafields.custom_fields.materials }}",
+                        "text": "{% if closest.product.metafields.custom_fields.materials != blank %}{{ closest.product.metafields.custom_fields.materials }}{% endif %}",
                         "width": "100%",
                         "type_preset": "rte"
                       }
