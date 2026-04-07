@@ -1,125 +1,166 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "gldn_slideshow": {
       "type": "slideshow",
       "name": "Hero Slideshow",
-      "settings": {
-        "display_mode": "full_frame",
-        "section_width": "full-width",
-        "slide_height": "large",
-        "content_position": "on-media",
-        "color_scheme": "scheme-6",
-        "icons_style": "arrows_large",
-        "icons_shape": "none",
-        "slideshow_controls_style": "dots",
-        "autoplay": false,
-        "autoplay_speed": 5,
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      },
       "blocks": {
-        "slide_1": {
+        "slide_hero": {
           "type": "_slide",
           "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/HP_Banner.png",
             "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
             "inherit_color_scheme": false,
             "color_scheme": "scheme-6",
+            "toggle_overlay": false,
             "padding-inline-start": 48,
             "padding-inline-end": 48,
             "padding-block-start": 48,
-            "padding-block-end": 72
+            "padding-block-end": 48
           },
           "blocks": {
             "heading": {
               "type": "text",
               "name": "Heading",
               "settings": {
-                "text": "<h1>Fine Jewelry, Personalized</h1>",
+                "text": "<h1>Most-Loved Gifts</h1>",
                 "type_preset": "h1",
-                "alignment": "center"
+                "alignment": "center",
+                "wrap": "pretty"
               }
             },
-            "subtext": {
+            "subheading": {
               "type": "text",
+              "name": "Subheading",
               "settings": {
-                "text": "<p>Handcrafted pieces made just for you</p>",
-                "alignment": "center",
-                "padding-block-end": 24
+                "text": "<p>Surprises for every spring & summer occasion.</p>",
+                "type_preset": "body",
+                "alignment": "center"
               }
             },
             "button": {
               "type": "button",
               "settings": {
-                "label": "Shop Now",
-                "link": "shopify://collections/all",
-                "style_class": "button-primary"
+                "label": "SHOP BESTSELLERS",
+                "link": "shopify://collections/best-sellers",
+                "style_class": "button"
               }
             }
           },
-          "block_order": ["heading", "subtext", "button"]
+          "block_order": ["heading", "subheading", "button"]
         }
       },
-      "block_order": ["slide_1"]
-    },
-    "gldn_feature_blocks": {
-      "type": "custom-feature-blocks",
-      "name": "Feature Blocks",
+      "block_order": ["slide_hero"],
       "settings": {
-        "eyebrow": "",
-        "heading": "",
-        "subheading": "",
-        "section_width": "page-width",
-        "color_scheme": "scheme-1",
-        "padding-block-start": 60,
-        "padding-block-end": 60
-      },
-      "blocks": {
-        "block_1": { "type": "block", "settings": {} },
-        "block_2": { "type": "block", "settings": {} },
-        "block_3": { "type": "block", "settings": {} }
-      },
-      "block_order": ["block_1", "block_2", "block_3"]
+        "display_mode": "full_frame",
+        "section_width": "full-width",
+        "slide_height": "medium",
+        "content_position": "on-media",
+        "color_scheme": "scheme-6",
+        "icons_style": "arrows_large",
+        "icons_shape": "none",
+        "slideshow_controls_style": "dots",
+        "autoplay": false,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     },
+
     "gldn_cta_gallery": {
       "type": "custom-cta-gallery",
       "name": "CTA Gallery",
+      "blocks": {
+        "item_necklaces": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Necklaces_9d226279-30b5-4bff-b8d0-6d0ca726dcea.png",
+            "eyebrow": "",
+            "title": "",
+            "button_label": "shop necklaces",
+            "link": "shopify://collections/necklaces",
+            "hide_mobile": true
+          }
+        },
+        "item_rings": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Rings_6ba991fa-62f8-4113-86a2-303d42a42a7e.jpg",
+            "eyebrow": "",
+            "title": "",
+            "button_label": "shop rings",
+            "link": "shopify://collections/rings",
+            "hide_mobile": true
+          }
+        },
+        "item_earrings": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Earrings_fe0b2dc3-a3c2-47c2-9827-4cbf4b5c7524.png",
+            "eyebrow": "",
+            "title": "",
+            "button_label": "Shop Earrings",
+            "link": "shopify://collections/earrings",
+            "hide_mobile": true
+          }
+        },
+        "item_bracelets": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Bracelets.jpg",
+            "eyebrow": "",
+            "title": "",
+            "button_label": "Shop Bracelets",
+            "link": "shopify://collections/bracelets",
+            "hide_mobile": true
+          }
+        },
+        "item_wedding": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Small_Block_Bridal.png",
+            "eyebrow": "",
+            "title": "The Easiest \"I Do\"",
+            "button_label": "shop wedding collection",
+            "link": "shopify://collections/bridal-wedding-jewelry",
+            "hide_mobile": false
+          }
+        },
+        "item_flora": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Flora_Large_Block.png",
+            "eyebrow": "",
+            "title": "Forever Flowers",
+            "button_label": "SHOP Flora Collection",
+            "link": "shopify://collections/flora",
+            "hide_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "item_necklaces",
+        "item_rings",
+        "item_earrings",
+        "item_bracelets",
+        "item_wedding",
+        "item_flora"
+      ],
       "settings": {
         "heading": "",
-        "section_width": "full-width",
+        "section_width": "page-width",
         "gallery_height": 56,
         "gallery_gap": 4,
         "color_scheme": "scheme-1",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      },
-      "blocks": {
-        "item_1": { "type": "item", "settings": {} },
-        "item_2": { "type": "item", "settings": {} },
-        "item_3": { "type": "item", "settings": {} }
-      },
-      "block_order": ["item_1", "item_2", "item_3"]
+        "padding-block-start": 74,
+        "padding-block-end": 74
+      }
     },
+
     "gldn_featured_collections": {
       "type": "collection-links",
       "name": "Featured Collections",
-      "settings": {
-        "layout": "spotlight",
-        "section_width": "page-width",
-        "alignment": "left",
-        "image_position": "right",
-        "color_scheme": "scheme-1",
-        "padding-block-start": 60,
-        "padding-block-end": 60
-      },
+      "disabled": true,
       "blocks": {
         "link": {
           "type": "_collection-link",
@@ -145,29 +186,188 @@
           "block_order": []
         }
       },
-      "block_order": []
+      "block_order": [],
+      "settings": {
+        "layout": "spotlight",
+        "section_width": "page-width",
+        "alignment": "left",
+        "image_position": "right",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
     },
+
     "gldn_home_anatomy": {
       "type": "custom-home-anatomy",
-      "name": "Home Anatomy",
+      "name": "Product Spotlights",
+      "blocks": {
+        "slide_toi_et_moi": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Aura birthstones",
+            "title": "Toi et Moi Necklace",
+            "text": "<p>\u201cI absolutely love this necklace. So dainty, simple and beautiful. I got it with me and my son\u2019s birthstones. Thank you!\u201d</p><p>- Angela E.</p>",
+            "image": "shopify://shop_images/Toi_et_Moi.jpg",
+            "features": "<p><strong>Piece</strong><br/><a href=\"/products/silver-toi-et-moi-necklace\" title=\"Silver Toi et Moi Necklace\">Toi et Moi Necklace</a></p>",
+            "button_label": "SHOP AURA BIRTHSTONES",
+            "button_link": "shopify://collections/aura-gemstones"
+          }
+        },
+        "slide_aura_enamel": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "STACKING FAVORITES",
+            "title": "Aura Enamel Bead",
+            "text": "<p>\u201cI love how dainty these are but they provide a little color and elevate the jewelry. Lightweight, shiny and precious. I ordered the Sage Green and it fits August beautifully.\u201d</p><p>- Sarah H.</p>",
+            "image": "shopify://shop_images/Aura_Enamel_Bead.jpg",
+            "features": "<p><strong>Piece</strong><br/><a href=\"/products/aura-enamel-bead\" title=\"Extra Aura Enamel Bead\">Aura Enamel Beads</a></p>",
+            "button_label": "SHOP CHARMS",
+            "button_link": "shopify://collections/charms"
+          }
+        },
+        "slide_my_garden": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "flora",
+            "title": "My Garden Meuse Band",
+            "text": "<p>\u201cI bought these rings to ask both my sisters to be my maid of honors. I used the flowers of each of our birth months along with our mother\u2018s birth flower and they came out absolutely beautiful!\u201d</p><p>- Kristene G.</p>",
+            "image": "shopify://shop_images/My_Garden.jpg",
+            "features": "<p><strong>Piece</strong><br/><a href=\"/products/my-garden-meuse-band\" title=\"My Garden Meuse Band\">My Garden Meuse Band</a></p>",
+            "button_label": "THE FLORA COLLECTION",
+            "button_link": "shopify://collections/flora"
+          }
+        }
+      },
+      "block_order": [
+        "slide_toi_et_moi",
+        "slide_aura_enamel",
+        "slide_my_garden"
+      ],
       "settings": {
         "heading": "",
         "autoplay": false,
         "autoplay_speed": 5,
         "section_width": "page-width",
-        "color_scheme": "scheme-2",
+        "color_scheme": "scheme-gldn-tan",
         "padding-block-start": 80,
         "padding-block-end": 80
-      },
-      "blocks": {
-        "slide_1": { "type": "slide", "settings": {} },
-        "slide_2": { "type": "slide", "settings": {} }
-      },
-      "block_order": ["slide_1", "slide_2"]
+      }
     },
+
     "gldn_dynamic_collections": {
       "type": "custom-dynamic-collections",
       "name": "Dynamic Collections",
+      "blocks": {
+        "group_bestsellers": {
+          "type": "group",
+          "settings": {
+            "tab_label": "Bestsellers",
+            "section_eyebrow": "GUARANTEED TO LOVE",
+            "section_title": "Best Sellers"
+          }
+        },
+        "item_kindred_birthstone": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_bestsellers",
+            "title": "Kindred Birthstone Necklace",
+            "subtitle": "FOR YOU & YOUR KIN",
+            "cta_label": "",
+            "link": "shopify://products/kindred-birthstone-necklace"
+          }
+        },
+        "item_flora_meuse": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_bestsellers",
+            "title": "Flora Meuse Band",
+            "subtitle": "FLOWERS ARE FOREVER",
+            "cta_label": "",
+            "link": "shopify://products/flora-meuse-band"
+          }
+        },
+        "item_micro_signet": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_bestsellers",
+            "title": "Micro Signet Ring",
+            "subtitle": "TINY TAKE ON A TIMELESS PIECE",
+            "cta_label": "",
+            "link": "shopify://products/micro-signet-ring"
+          }
+        },
+        "item_flourish_hoops": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_bestsellers",
+            "title": "Flourish Hoops",
+            "subtitle": "A GEMSTONE DREAMSCAPE",
+            "cta_label": "",
+            "link": "shopify://products/flourish-hoops"
+          }
+        },
+        "group_new_arrivals": {
+          "type": "group",
+          "settings": {
+            "tab_label": "New Arrivals",
+            "section_eyebrow": "GUARANTEED TO LOVE",
+            "section_title": "New Arrivals"
+          }
+        },
+        "item_constellation_earrings": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_new_arrivals",
+            "title": "Little Constellation Earring Set",
+            "subtitle": "jewelry for dreamers",
+            "cta_label": "",
+            "link": "shopify://products/little-constellation-earring-set"
+          }
+        },
+        "item_moonlit_ring": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_new_arrivals",
+            "title": "Moonlit Stacking Ring",
+            "subtitle": "gleaming and gorgeous",
+            "cta_label": "",
+            "link": "shopify://products/moonlit-stacking-ring"
+          }
+        },
+        "item_starscape_necklace": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_new_arrivals",
+            "title": "Starscape Necklace",
+            "subtitle": "your very own shooting star",
+            "cta_label": "",
+            "link": "shopify://products/starscape-necklace"
+          }
+        },
+        "item_luna_studs": {
+          "type": "item",
+          "settings": {
+            "group_id": "group_new_arrivals",
+            "title": "Luna Diamond Flatback Studs",
+            "subtitle": "giving you the moon",
+            "cta_label": "",
+            "link": "shopify://products/luna-diamond-flatback-studs"
+          }
+        }
+      },
+      "block_order": [
+        "group_bestsellers",
+        "item_kindred_birthstone",
+        "item_flora_meuse",
+        "item_micro_signet",
+        "item_flourish_hoops",
+        "group_new_arrivals",
+        "item_constellation_earrings",
+        "item_moonlit_ring",
+        "item_starscape_necklace",
+        "item_luna_studs"
+      ],
       "settings": {
         "eyebrow": "",
         "heading": "",
@@ -176,45 +376,67 @@
         "color_scheme": "scheme-1",
         "padding-block-start": 80,
         "padding-block-end": 80
-      },
-      "blocks": {
-        "group_1": {
-          "type": "group",
-          "settings": { "tab_label": "Shop All" }
-        },
-        "item_1": { "type": "item", "settings": {} },
-        "item_2": { "type": "item", "settings": {} },
-        "item_3": { "type": "item", "settings": {} },
-        "item_4": { "type": "item", "settings": {} }
-      },
-      "block_order": ["group_1", "item_1", "item_2", "item_3", "item_4"]
+      }
     },
+
     "gldn_how_it_works": {
       "type": "custom-how-it-works",
-      "name": "How It Works",
+      "name": "The GLDN Difference",
+      "blocks": {
+        "step_custom_jewelry": {
+          "type": "step",
+          "settings": {
+            "eyebrow": "THE GLDN DIFFERENCE",
+            "title": "Custom Jewelry",
+            "text": "<p>Make a one-of-a-kind piece with initials, names, dates, coordinates or symbols\u2014or anything you want to hold close\u2014and we\u2019ll bring it to life in our studio using hand tools and hand-stamping techniques. The result? A meaningful piece you\u2019ll truly cherish for a lifetime.</p>",
+            "image": "shopify://shop_images/Slide_1.jpg",
+            "video_loop": false
+          }
+        },
+        "step_circular_design": {
+          "type": "step",
+          "settings": {
+            "eyebrow": "THE GLDN DIFFERENCE",
+            "title": "Circular Design",
+            "text": "<p>90% of the metals we use are recycled, and we either reuse our leftover metals in new pieces or send them to a refinery. Using recycled metals is one of the best ways to reduce a jewelry piece\u2019s carbon footprint, and protect biodiversity and endangered animals across the planet.</p>",
+            "image": "shopify://shop_images/Slide_2.jpg",
+            "video_loop": false
+          }
+        },
+        "step_fair_sourcing": {
+          "type": "step",
+          "settings": {
+            "eyebrow": "THE GLDN DIFFERENCE",
+            "title": "Fair Sourcing",
+            "text": "<p>We only work with suppliers who\u2019ve been certified by the Responsible Jewellery Council, a non-profit sustainability auditor that upholds human rights, labor standards, and environmental protection throughout the entire jewelry supply chain.</p>",
+            "image": "shopify://shop_images/Slide_3.png",
+            "video_loop": false
+          }
+        }
+      },
+      "block_order": [
+        "step_custom_jewelry",
+        "step_circular_design",
+        "step_fair_sourcing"
+      ],
       "settings": {
         "eyebrow": "The Process",
-        "heading": "How It Works",
+        "heading": "The GLDN Difference",
         "media_position": "left",
         "autoplay": false,
         "autoplay_speed": 5,
-        "show_final_button": false,
+        "show_final_button": true,
+        "final_button_label": "GET THE FULL STORY",
+        "final_button_link": "shopify://pages/return-policies",
         "section_width": "page-width",
-        "color_scheme": "scheme-3",
+        "color_scheme": "scheme-2",
         "padding-block-start": 80,
         "padding-block-end": 80
-      },
-      "blocks": {
-        "step_1": { "type": "step", "settings": { "eyebrow": "Step 1" } },
-        "step_2": { "type": "step", "settings": { "eyebrow": "Step 2" } },
-        "step_3": { "type": "step", "settings": { "eyebrow": "Step 3" } }
-      },
-      "block_order": ["step_1", "step_2", "step_3"]
+      }
     }
   },
   "order": [
     "gldn_slideshow",
-    "gldn_feature_blocks",
     "gldn_cta_gallery",
     "gldn_featured_collections",
     "gldn_home_anatomy",

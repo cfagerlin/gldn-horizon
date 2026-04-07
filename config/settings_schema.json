@@ -2287,5 +2287,74 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Searchspring",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "ss_enable",
+        "label": "Enable Searchspring",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "ss_site_id",
+        "label": "Site ID",
+        "default": "1tj8f1"
+      },
+      {
+        "type": "text",
+        "id": "ss_collection_handle",
+        "label": "Search collection handle",
+        "default": "shop"
+      },
+      {
+        "type": "text",
+        "id": "ss_branch_name",
+        "label": "Branch name (optional)"
+      }
+    ]
+  },
+  {
+    "name": "Beam Impact",
+    "settings": [
+      {
+        "type": "text",
+        "id": "beam_sdk_version",
+        "label": "SDK version",
+        "default": "v1.54.5"
+      },
+      {
+        "type": "text",
+        "id": "beam_api_key",
+        "label": "API key",
+        "default": "wNehBNAk3Cpo.22f08700-714a-45af-97dc-f0e3845d1568"
+      },
+      {
+        "type": "number",
+        "id": "beam_chain_id",
+        "label": "Chain ID",
+        "default": 357
+      },
+      {
+        "type": "number",
+        "id": "beam_store_id",
+        "label": "Store ID",
+        "default": 546
+      },
+      {
+        "type": "text",
+        "id": "beam_store_domain",
+        "label": "Store domain",
+        "default": "gldn.com"
+      },
+      {
+        "type": "text",
+        "id": "beam_base_url",
+        "label": "Base URL",
+        "default": "https://api.beamimpact.com"
+      }
+    ]
   }
 ]

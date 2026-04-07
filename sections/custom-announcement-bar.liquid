@@ -1,0 +1,215 @@
+{% comment %}
+  sections/custom-announcement-bar.liquid
+  GLDN — Dismissible utility/announcement bar.
+
+  Placed in the header group via header-group.json.
+  Renders a warm-brown (#5d3a26) banner with configurable content and a
+  close button that sets a cookie to suppress it for N days.
+  Does NOT modify header.liquid.
+{% endcomment %}
+
+<style>
+  .gldn-utility-bar {
+    background-color: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+    font-size: {{ section.settings.font_size }};
+    font-weight: 300;
+    line-height: 1.3;
+    min-height: {{ section.settings.height }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out, opacity 0.25s ease-out,
+      padding 0.25s ease-out;
+  }
+
+  .gldn-utility-bar[aria-hidden='true'] {
+    max-height: 0 !important;
+    min-height: 0;
+    opacity: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .gldn-utility-bar a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .gldn-utility-bar__text {
+    padding: 0 3.5em;
+  }
+
+  .gldn-utility-bar__close {
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: {{ section.settings.text_color }};
+    padding: 0.6em;
+    line-height: 0;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+  }
+
+  @media (hover: hover) {
+    .gldn-utility-bar__close:hover {
+      opacity: 1;
+    }
+  }
+</style>
+
+<div
+  class="gldn-utility-bar"
+  id="gldn-utility-bar"
+  role="status"
+  aria-live="polite"
+>
+  <div class="gldn-utility-bar__text">
+    {%- if section.settings.link != blank -%}
+      <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
+    {%- else -%}
+      {{ section.settings.text }}
+    {%- endif -%}
+  </div>
+  {%- if section.settings.show_close -%}
+    <button
+      class="gldn-utility-bar__close"
+      id="gldn-utility-bar-close"
+      aria-label="Close"
+    >
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true" focusable="false">
+        <line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  {%- endif -%}
+</div>
+
+<script>
+  (function () {
+    const COOKIE = '{{ section.settings.cookie_name | escape }}';
+    const DAYS   = {{ section.settings.cookie_days }};
+    const bar    = document.getElementById('gldn-utility-bar');
+    const btn    = document.getElementById('gldn-utility-bar-close');
+
+    function hasCookie(name) {
+      return document.cookie.split(';').some(function (c) {
+        return c.trim().startsWith(name + '=');
+      });
+    }
+
+    function setCookie(name, days) {
+      const exp = new Date(Date.now() + days * 864e5).toUTCString();
+      document.cookie = name + '=1; expires=' + exp + '; path=/';
+    }
+
+    // Suppress immediately if already dismissed
+    if (hasCookie(COOKIE)) {
+      bar.style.display = 'none';
+    }
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        // Animate out
+        bar.style.maxHeight = bar.offsetHeight + 'px';
+        bar.setAttribute('aria-hidden', 'true');
+        setCookie(COOKIE, DAYS);
+        setTimeout(function () {
+          bar.style.display = 'none';
+        }, 300);
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GLDN Announcement Bar",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Dismissible utility bar that sits above the main header. Uses a cookie so the visitor only sees it once per session cycle."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Message",
+      "default": "Free shipping on US orders — learn more"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background colour",
+      "default": "#5d3a26"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text / icon colour",
+      "default": "#fdfdfd"
+    },
+    {
+      "type": "text",
+      "id": "font_size",
+      "label": "Font size",
+      "default": "1.125rem",
+      "info": "1.125rem ≈ 18px at 16px base"
+    },
+    {
+      "type": "text",
+      "id": "height",
+      "label": "Min height",
+      "default": "45px"
+    },
+    {
+      "type": "header",
+      "content": "Dismiss"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show close button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cookie_name",
+      "label": "Cookie key",
+      "default": "gldn-utility-bar-v1",
+      "info": "Change this to reset the dismiss state for all visitors."
+    },
+    {
+      "type": "range",
+      "id": "cookie_days",
+      "label": "Dismiss duration (days)",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7
+    }
+  ],
+  "presets": [
+    {
+      "name": "GLDN Announcement Bar"
+    }
+  ]
+}
+{% endschema %}

@@ -54,23 +54,27 @@
                   <div class="custom-home-anatomy__body rte">{{ block.settings.text }}</div>
                 {%- endif -%}
                 {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
-                  <a class="button button-secondary custom-home-anatomy__cta" href="{{ block.settings.button_link }}">
+                  <a class="custom-home-anatomy__cta" href="{{ block.settings.button_link }}">
                     {{ block.settings.button_label | escape }}
                   </a>
                 {%- endif -%}
               </div>
 
               <div class="custom-home-anatomy__media-col">
-                {%- if block.settings.image != blank -%}
-                  {%- assign block_image_alt = block.settings.title | default: '' | escape -%}
-                  {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 750px) 45vw, 90vw', alt: block_image_alt, class: 'custom-home-anatomy__image' }}
-                {%- else -%}
-                  {{ 'product-1' | placeholder_svg_tag: 'custom-home-anatomy__image custom-home-anatomy__placeholder' }}
-                {%- endif -%}
+                <div class="custom-home-anatomy__img-wrap">
+                  <div class="custom-home-anatomy__img-main">
+                    {%- if block.settings.image != blank -%}
+                      {%- assign block_image_alt = block.settings.title | default: '' | escape -%}
+                      {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 750px) 35vw, 67vw', alt: block_image_alt, class: 'custom-home-anatomy__image' }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'custom-home-anatomy__image custom-home-anatomy__placeholder' }}
+                    {%- endif -%}
+                  </div>
 
-                {%- if block.settings.features != blank -%}
-                  <div class="custom-home-anatomy__features rte">{{ block.settings.features }}</div>
-                {%- endif -%}
+                  {%- if block.settings.features != blank -%}
+                    <div class="custom-home-anatomy__features rte">{{ block.settings.features }}</div>
+                  {%- endif -%}
+                </div>
               </div>
             </div>
           </div>
@@ -84,17 +88,14 @@
             aria-label="{{ 'accessibility.previous_slide' | t | default: 'Previous slide' }}"
             data-carousel-prev
           >
-            {{ 'icon-chevron-left.svg' | inline_asset_content }}
+            <svg aria-hidden="true" viewBox="0 0 32 32"><path fill="currentColor" d="M0,16C0,7.178,7.178,0,16,0s16,7.178,16,16s-7.178,16-16,16S0,24.822,0,16z M1.203,16 c0,8.159,6.638,14.797,14.797,14.797S30.797,24.159,30.797,16S24.159,1.203,16,1.203S1.203,7.841,1.203,16z M16.978,21.22 l0.851-0.851l-4.53-4.529l4.53-4.53l-0.851-0.851l-5.38,5.381L16.978,21.22z"/></svg>
           </button>
-          <span class="custom-home-anatomy__counter" aria-hidden="true">
-            <span data-carousel-current>1</span> / {{ section.blocks.size }}
-          </span>
           <button
             class="custom-home-anatomy__arrow custom-home-anatomy__arrow--next"
             aria-label="{{ 'accessibility.next_slide' | t | default: 'Next slide' }}"
             data-carousel-next
           >
-            {{ 'icon-chevron-right.svg' | inline_asset_content }}
+            <svg aria-hidden="true" viewBox="0 0 32 32"><path fill="currentColor" d="M16,32C7.178,32,0,24.822,0,16S7.178,0,16,0s16,7.178,16,16S24.822,32,16,32z M16,1.203 C7.841,1.203,1.203,7.841,1.203,16S7.841,30.797,16,30.797S30.797,24.159,30.797,16S24.159,1.203,16,1.203z M20.402,15.84 l-5.38-5.381l-0.851,0.851l4.53,4.53l-4.53,4.529l0.851,0.851L20.402,15.84z"/></svg>
           </button>
         </div>
       {%- endif -%}
@@ -103,9 +104,13 @@
 </section>
 
 {% stylesheet %}
+  .custom-home-anatomy {
+    padding: 5em 0;
+  }
+
   .custom-home-anatomy__head {
     text-align: center;
-    margin-block-end: var(--gap-2xl);
+    margin-block-end: 3em;
   }
 
   .custom-home-anatomy__heading { margin: 0; }
@@ -124,7 +129,7 @@
     grid-area: stack;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.7s ease;
   }
 
   .custom-home-anatomy__slide.is-active {
@@ -142,77 +147,169 @@
     }
   }
 
+  /* ---- Left column: text ---- */
   .custom-home-anatomy__text-col {
     display: flex;
     flex-direction: column;
-    gap: var(--gap-md);
+    max-width: 28em;
+    padding: 2em 0;
   }
 
   .custom-home-anatomy__eyebrow {
-    margin: 0;
-    font-size: 0.75rem;
+    margin: 0 0 0.5em;
+    font-size: 0.75em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    opacity: 0.65;
+    letter-spacing: 0.1em;
   }
 
   .custom-home-anatomy__title {
-    margin: 0;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    margin: 0 0 1em;
+    font-family: var(--font-heading--family, 'Spectral', Georgia, serif);
+    font-size: 2.18em;
+    font-weight: 200;
+    font-style: normal;
+    letter-spacing: -0.02em;
+    line-height: 110%;
   }
 
-  .custom-home-anatomy__body { margin: 0; }
+  /* Body text: heading font, large, light weight — testimonial quotes */
+  .custom-home-anatomy__body {
+    margin: 0;
+    font-family: var(--font-heading--family, 'Spectral', Georgia, serif);
+    font-size: 1.375em;
+    font-weight: 200;
+    line-height: 130%;
+    min-height: 9em;
+  }
 
-  .custom-home-anatomy__cta { align-self: flex-start; }
+  .custom-home-anatomy__body p {
+    margin-bottom: 0.5em;
+  }
 
+  .custom-home-anatomy__body a {
+    font-family: var(--font-body--family, 'freight-sans-pro', sans-serif);
+    font-size: 0.545454em;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    text-transform: uppercase;
+    text-decoration: underline;
+    color: inherit !important;
+  }
+
+  /* CTA button — btn v2 style: light bg, dark text */
+  .custom-home-anatomy__cta {
+    align-self: flex-start;
+    display: inline-block;
+    margin-top: 1em;
+    font-family: var(--font-body--family, 'freight-sans-pro', sans-serif);
+    font-size: 0.75em;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    padding: 1.17em 2em;
+    border: 0;
+    border-radius: 0;
+    color: #333;
+    background-color: #fdfdfd;
+    min-width: 240px;
+    text-align: center;
+    line-height: 100%;
+  }
+
+  /* ---- Right column: image + features ---- */
   .custom-home-anatomy__media-col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-xl);
+    position: relative;
+    padding-right: 1.5em;
+    padding-bottom: 3em;
+  }
+
+  .custom-home-anatomy__img-wrap {
+    position: relative;
+    display: grid;
+    grid-template-columns: 71% 29%;
+    align-items: end;
+  }
+
+  /* Decorative border behind image — matches live site */
+  .custom-home-anatomy__img-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: -3em;
+    right: -1.5em;
+    width: 75%;
+    height: 100%;
+    border: 1px solid currentColor;
+    pointer-events: none;
   }
 
   .custom-home-anatomy__image,
   .custom-home-anatomy__placeholder {
     width: 100%;
-    height: auto;
+    aspect-ratio: 100 / 137;
+    object-fit: cover;
     display: block;
+    position: relative;
   }
 
   .custom-home-anatomy__features {
+    padding: 1em 0 1em 2em;
     font-size: 0.875rem;
-    line-height: 1.6;
+    line-height: 140%;
   }
 
+  .custom-home-anatomy__features p {
+    line-height: 140%;
+  }
+
+  .custom-home-anatomy__features strong {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 0.625em;
+    letter-spacing: 0.1em;
+  }
+
+  .custom-home-anatomy__features a {
+    color: inherit !important;
+    text-decoration: underline;
+  }
+
+  @media (hover: hover) {
+    .custom-home-anatomy__features a:hover {
+      opacity: 0.7;
+    }
+  }
+
+  /* ---- Controls: left-aligned arrows, below carousel ---- */
   .custom-home-anatomy__controls {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--gap-md);
-    margin-block-start: var(--gap-xl);
+    justify-content: flex-start;
+    gap: 0.4em;
+    margin-block-start: 1em;
   }
 
   .custom-home-anatomy__arrow {
     background: none;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    border: 0;
+    padding: 0;
+    font-size: 2.1875em;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    padding: 0;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    color: inherit;
   }
 
   .custom-home-anatomy__arrow:hover {
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    opacity: 1;
   }
 
   .custom-home-anatomy__arrow svg {
-    width: 20px;
-    height: 20px;
+    width: 1em;
+    height: 1em;
     display: block;
   }
 
@@ -220,6 +317,70 @@
     font-size: 0.875rem;
     min-width: 3ch;
     text-align: center;
+    display: none;
+  }
+
+  /* ---- Responsive ---- */
+
+  @media screen and (max-width: 749px) {
+    .custom-home-anatomy {
+      padding: 3.5em 1.5rem 2.5em;
+    }
+
+    .custom-home-anatomy__slide-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .custom-home-anatomy__text-col {
+      max-width: none;
+      padding: 0;
+    }
+
+    .custom-home-anatomy__media-col {
+      padding-right: 0;
+      padding-bottom: 0;
+    }
+
+    .custom-home-anatomy__img-wrap {
+      grid-template-columns: 67% 33%;
+    }
+
+    .custom-home-anatomy__img-wrap::before {
+      display: none;
+    }
+
+    .custom-home-anatomy__image {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    .custom-home-anatomy__features {
+      padding: 1em 0.5em 1em 1em;
+      min-height: 16em;
+    }
+
+    .custom-home-anatomy__eyebrow {
+      font-size: 0.6875em;
+    }
+
+    .custom-home-anatomy__title {
+      font-size: 1.875em;
+      margin-bottom: 0.5em;
+    }
+
+    .custom-home-anatomy__body {
+      font-size: 1.1875em;
+      min-height: 9em;
+    }
+
+    .custom-home-anatomy__cta {
+      width: 100%;
+      margin-top: 2em;
+    }
+
+    .custom-home-anatomy__controls {
+      display: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

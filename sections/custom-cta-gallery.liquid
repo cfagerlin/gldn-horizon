@@ -28,7 +28,7 @@
     >
       {%- for block in section.blocks -%}
         <div
-          class="custom-cta-gallery__item{% if block.settings.hide_mobile %} custom-cta-gallery__item--hide-mobile{% endif %}"
+          class="custom-cta-gallery__item{% if block.settings.title != blank %} custom-cta-gallery__item--featured{% endif %}{% if block.settings.hide_mobile %} custom-cta-gallery__item--hide-mobile{% endif %}"
           role="listitem"
           {{ block.shopify_attributes }}
         >
@@ -108,6 +108,7 @@
   .custom-cta-gallery__grid {
     display: grid;
     gap: var(--cta-gallery-gap, 4px);
+    padding-inline: 18px;
   }
 
   /* Layout variants by block count */
@@ -117,7 +118,21 @@
   .custom-cta-gallery__grid--4 { grid-template-columns: repeat(2, 1fr); }
   .custom-cta-gallery__grid--5 { grid-template-columns: repeat(3, 1fr); }
   .custom-cta-gallery__grid--5 .custom-cta-gallery__item:nth-child(n+4) { grid-column: span 1; }
-  .custom-cta-gallery__grid--6 { grid-template-columns: repeat(3, 1fr); }
+
+  /* 6-block asymmetric layout matching live gldn.com:
+     Left 3/5: top row (3 equal items), bottom row (1 small + 1 wide)
+     Right 2/5: single tall item spanning both rows */
+  .custom-cta-gallery__grid--6 {
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .custom-cta-gallery__grid--6 .custom-cta-gallery__item:nth-child(5) {
+    grid-column: 2 / 4;
+  }
+  .custom-cta-gallery__grid--6 .custom-cta-gallery__item:nth-child(6) {
+    grid-column: 4;
+    grid-row: 1 / 3;
+  }
 
   .custom-cta-gallery__item {
     position: relative;
@@ -178,28 +193,81 @@
 
   .custom-cta-gallery__title {
     margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-family: var(--font-heading--family, 'Spectral', Georgia, serif);
+    font-size: 2.18em;
+    font-weight: 200;
+    font-style: normal;
+    letter-spacing: -0.02em;
+    line-height: 110%;
   }
 
+  /* Primary button style — matches live .btn.v2
+     (light background, dark text, no border) */
   .custom-cta-gallery__btn {
     display: inline-block;
-    margin-block-start: 6px;
-    font-size: 0.875rem;
-    text-decoration: underline;
+    margin-block-start: 12px;
+    font-family: var(--font-body--family, 'freight-sans-pro', sans-serif);
+    font-size: 0.75em;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    padding: 1.17em 2em;
+    border: 0;
+    color: #333;
+    background-color: #fdfdfd;
+    min-width: 200px;
+    text-align: center;
   }
 
-  /* Hover: swap images and reveal overlay */
+  /* Featured items (with title): always show overlay */
+  .custom-cta-gallery__item--featured .custom-cta-gallery__info {
+    opacity: 1;
+    transform: none;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent 70%);
+    padding: 1em 1em 1.5em;
+  }
+
+  /* Non-featured hover overlay: centered text + gradient */
+  .custom-cta-gallery__info--hover-style {
+    text-align: center;
+  }
+
+  /* Hover: show hover image on top (if exists), reveal overlay */
   @media (hover: hover) {
-    .custom-cta-gallery__item:hover .custom-cta-gallery__img--default { opacity: 0; }
+    /* Hover image covers default naturally — no need to hide default */
     .custom-cta-gallery__item:hover .custom-cta-gallery__img--hover { opacity: 1; }
-    .custom-cta-gallery__item:hover .custom-cta-gallery__info {
+
+    /* Non-featured: show overlay on hover */
+    .custom-cta-gallery__item:not(.custom-cta-gallery__item--featured):hover .custom-cta-gallery__info {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Featured: darken slightly on hover */
+    .custom-cta-gallery__item--featured:hover .custom-cta-gallery__info {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 70%);
+    }
   }
 
-  /* Touch: always show info overlay */
+  /* Non-featured hover overlay button — centered, bordered style */
+  .custom-cta-gallery__item:not(.custom-cta-gallery__item--featured) .custom-cta-gallery__info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .custom-cta-gallery__item:not(.custom-cta-gallery__item--featured) .custom-cta-gallery__btn {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    min-width: auto;
+    padding: 0.8em 1.5em;
+  }
+
+  /* Touch: always show info overlay for all items */
   @media (hover: none) {
     .custom-cta-gallery__info {
       opacity: 1;
@@ -220,6 +288,15 @@
     .custom-cta-gallery__grid--3 .custom-cta-gallery__item:first-child {
       grid-row: auto;
       grid-column: span 2;
+    }
+
+    /* Reset 6-block asymmetric positions for mobile */
+    .custom-cta-gallery__grid--6 .custom-cta-gallery__item:nth-child(5) {
+      grid-column: auto;
+    }
+    .custom-cta-gallery__grid--6 .custom-cta-gallery__item:nth-child(6) {
+      grid-column: auto;
+      grid-row: auto;
     }
   }
 

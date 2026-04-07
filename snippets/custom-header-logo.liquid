@@ -1,0 +1,90 @@
+{% comment %}
+  snippets/custom-header-logo.liquid
+  GLDN — Inline SVG logo injection
+
+  PURPOSE
+  -------
+  Replaces Horizon's image-picker logo with an inline SVG that uses
+  fill="currentColor" so it inherits the header text colour from the
+  3-state colour system (normal/hover/scroll).
+
+  HOW IT WORKS
+  ------------
+  1. Renders a <style> block that hides Horizon's default logo containers
+     and styles the custom SVG logo.
+  2. Injects a small <script> that clones the SVG into the header-logo
+     element, so it renders in the correct position within Horizon's
+     header layout.
+
+  INCLUDED FROM
+  -------------
+  sections/custom-header-states.liquid (header group section)
+{% endcomment %}
+
+<style>
+  /* Hide Horizon's default logo image containers */
+  .header-logo__image-container--original,
+  .header-logo__image-container--inverse {
+    display: none !important;
+  }
+
+  /* Style the injected SVG logo */
+  .gldn-logo-svg {
+    display: block;
+    width: 63px;
+    height: 17px;
+    color: currentColor;
+  }
+
+  .gldn-logo-svg svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ensure the header-logo link wraps the SVG correctly.
+     .header-logo IS the <a> element in Horizon (not a wrapper). */
+  a.header-logo {
+    display: flex;
+    align-items: center;
+  }
+</style>
+
+<template id="gldn-logo-template">
+  <span class="gldn-logo-svg" aria-hidden="true">
+    {{ 'custom-logo-gldn.svg' | inline_asset_content }}
+  </span>
+</template>
+
+<script>
+  (function() {
+    'use strict';
+
+    function injectLogo() {
+      // .header-logo IS the <a> element in Horizon
+      const logoEl = document.querySelector('.header-logo');
+      if (!logoEl) return false;
+
+      // Don't inject twice
+      if (logoEl.querySelector('.gldn-logo-svg')) return true;
+
+      const template = document.getElementById('gldn-logo-template');
+      if (!template) return false;
+
+      const clone = template.content.cloneNode(true);
+      logoEl.prepend(clone);
+
+      return true;
+    }
+
+    // Try immediately, then observe for header lazy-load
+    if (!injectLogo()) {
+      const observer = new MutationObserver(function(mutations, obs) {
+        if (injectLogo()) obs.disconnect();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      // Safety: disconnect after 10s
+      setTimeout(function() { observer.disconnect(); }, 10000);
+    }
+  })();
+</script>

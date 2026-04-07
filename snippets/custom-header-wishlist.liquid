@@ -1,0 +1,75 @@
+{% comment %}
+  snippets/custom-header-wishlist.liquid
+  GLDN — Wishlist heart icon injected into the Horizon header actions row.
+
+  Rendered by sections/custom-header-states.liquid (already in the header group).
+  Injects a wishlist <a> link before the cart icon inside Horizon's
+  <header-actions> custom element.
+
+  Does NOT modify header.liquid or snippets/header-actions.liquid.
+{% endcomment %}
+
+<template id="gldn-wishlist-tpl">
+  <a
+    href="/pages/wishlist"
+    class="header-actions__action button-unstyled gldn-wishlist-action"
+    aria-label="Wishlist"
+  >
+    <span class="svg-wrapper">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 32 32"
+        fill="currentColor"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M23.021,1.652c-1.684,0-3.468,0.628-5.022,1.768C17.232,3.981,16.542,4.661,16,5.384c-0.542-0.723-1.232-1.402-1.999-1.964 c-1.555-1.14-3.339-1.768-5.022-1.768C4.028,1.652,0,5.68,0,10.631c0,11.035,15.294,19.488,15.45,19.574 c0.168,0.094,0.357,0.143,0.55,0.143s0.382-0.049,0.55-0.143C16.705,30.119,32,21.625,32,10.631C32,5.68,27.972,1.652,23.021,1.652z M29.736,10.631c0,8.952-12.634,16.608-13.736,17.273c-1.102-0.665-13.736-8.279-13.736-17.273c0-3.703,3.013-6.716,6.715-6.716 c2.684,0,5.288,2.204,5.948,4.183C15.081,8.561,15.511,8.871,16,8.871c0.487,0,0.919-0.31,1.073-0.772 c0.66-1.979,3.265-4.183,5.948-4.183C26.725,3.915,29.736,6.928,29.736,10.631z"/>
+      </svg>
+    </span>
+  </a>
+</template>
+
+<style>
+  .gldn-wishlist-action .svg-wrapper {
+    width: var(--icon-size-sm, 20px);
+    height: var(--icon-size-sm, 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gldn-wishlist-action svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  (function () {
+    function injectWishlist() {
+      if (document.getElementById('gldn-wishlist-action')) return;
+
+      const tpl = document.getElementById('gldn-wishlist-tpl');
+      if (!tpl) return;
+
+      const headerActions = document.querySelector('header-actions');
+      if (!headerActions) return;
+
+      const cart = headerActions.querySelector('.action__cart');
+      const node = tpl.content.cloneNode(true).firstElementChild;
+      node.id = 'gldn-wishlist-action';
+
+      if (cart) {
+        headerActions.insertBefore(node, cart);
+      } else {
+        headerActions.appendChild(node);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectWishlist);
+    } else {
+      injectWishlist();
+    }
+  })();
+</script>

@@ -25,27 +25,32 @@
 {% endcomment %}
 
 {%- liquid
-  assign normal_bg_rgb = section.settings.normal_bg | color_to_rgb
+  assign normal_r = section.settings.normal_bg | color_extract: 'red'
+  assign normal_g = section.settings.normal_bg | color_extract: 'green'
+  assign normal_b = section.settings.normal_bg | color_extract: 'blue'
   assign normal_opacity = section.settings.normal_opacity | divided_by: 100.0
-  assign scroll_bg_rgb = section.settings.scroll_bg | color_to_rgb
+
+  assign scroll_r = section.settings.scroll_bg | color_extract: 'red'
+  assign scroll_g = section.settings.scroll_bg | color_extract: 'green'
+  assign scroll_b = section.settings.scroll_bg | color_extract: 'blue'
   assign scroll_opacity = section.settings.scroll_opacity | divided_by: 100.0
-  assign hover_bg_rgb = section.settings.hover_bg | color_to_rgb
+
+  assign hover_r = section.settings.hover_bg | color_extract: 'red'
+  assign hover_g = section.settings.hover_bg | color_extract: 'green'
+  assign hover_b = section.settings.hover_bg | color_extract: 'blue'
   assign hover_opacity = section.settings.hover_opacity | divided_by: 100.0
 -%}
 
 <style>
   /* ── GLDN Header State CSS custom properties ─────────────────────────── */
   :root {
-    --gldn-header-normal-bg-rgb:  {{ normal_bg_rgb }};
-    --gldn-header-normal-opacity: {{ normal_opacity }};
+    --gldn-header-normal-bg:      rgba({{ normal_r }}, {{ normal_g }}, {{ normal_b }}, {{ normal_opacity }});
     --gldn-header-normal-text:    {{ section.settings.normal_text }};
 
-    --gldn-header-scroll-bg-rgb:  {{ scroll_bg_rgb }};
-    --gldn-header-scroll-opacity: {{ scroll_opacity }};
+    --gldn-header-scroll-bg:      rgba({{ scroll_r }}, {{ scroll_g }}, {{ scroll_b }}, {{ scroll_opacity }});
     --gldn-header-scroll-text:    {{ section.settings.scroll_text }};
 
-    --gldn-header-hover-bg-rgb:   {{ hover_bg_rgb }};
-    --gldn-header-hover-opacity:  {{ hover_opacity }};
+    --gldn-header-hover-bg:       rgba({{ hover_r }}, {{ hover_g }}, {{ hover_b }}, {{ hover_opacity }});
     --gldn-header-hover-text:     {{ section.settings.hover_text }};
 
     --gldn-header-transition:     {{ section.settings.transition_speed }}ms ease;
@@ -53,6 +58,10 @@
 </style>
 
 <script src="{{ 'custom-header-state.js' | asset_url }}" defer></script>
+
+{%- render 'custom-header-wishlist' -%}
+{%- render 'custom-header-logo' -%}
+{%- render 'custom-mega-menu' -%}
 
 {% schema %}
 {
@@ -143,6 +152,46 @@
       "label": "Transition speed",
       "min": 0, "max": 500, "step": 50, "unit": "ms",
       "default": 200
+    },
+    {
+      "type": "header",
+      "content": "Mega menu — Gift Guide image"
+    },
+    {
+      "type": "image_picker",
+      "id": "gift_guide_image",
+      "label": "Featured image"
+    },
+    {
+      "type": "text",
+      "id": "gift_guide_caption",
+      "label": "Caption",
+      "default": "Shop Birth Flowers"
+    },
+    {
+      "type": "url",
+      "id": "gift_guide_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Mega menu — About image"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_image",
+      "label": "Featured image"
+    },
+    {
+      "type": "text",
+      "id": "about_caption",
+      "label": "Caption",
+      "default": "Read our latest journal"
+    },
+    {
+      "type": "url",
+      "id": "about_link",
+      "label": "Link"
     }
   ]
 }

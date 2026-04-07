@@ -1,0 +1,577 @@
+{% comment %}
+  sections/custom-footer-main.liquid
+  GLDN — Two-tone main footer, matching the live site layout.
+
+  Structure (desktop):
+    LEFT 59%  — charcoal (#333333 default):
+      "Drop us a line." heading, email link, SMS link, customer service hours,
+      link columns from linklists["footer"] (nested: parent = column, children = items),
+      social icons.
+    RIGHT 41% — sage (#4c544c default):
+      newsletter heading, label, Shopify customer email signup form.
+
+  Mobile: reverses column order (right/newsletter first, then left/contact).
+  Enabled on footer group. Sits as nth-child(2) below the trust bar (nth-child(1)).
+  The footer-utilities section sits below as a separate full-width bar.
+{% endcomment %}
+
+{%- liquid
+  assign left_menu = linklists[section.settings.link_list]
+  assign show_social = section.settings.show_social
+  assign fb_url = section.settings.facebook_url
+  assign ig_url = section.settings.instagram_url
+  assign pi_url = section.settings.pinterest_url
+  assign tw_url = section.settings.twitter_url
+  assign tt_url = section.settings.tiktok_url
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} .gldn-footer-main {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* ── Left column (charcoal) ─────────────────────────────────── */
+  #shopify-section-{{ section.id }} .gldn-footer-left {
+    background-color: {{ section.settings.left_bg }};
+    color: {{ section.settings.left_text }};
+    padding-top: 5.5em;
+    width: 59%;
+    box-sizing: border-box;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-left * {
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-left .gldn-footer-inner {
+    padding: 0 2.5em;
+    max-width: {{ section.settings.left_content_width }};
+  }
+
+  /* CS block */
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block {
+    padding-bottom: 3em;
+    border-bottom: 1px solid #666;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block h2 {
+    margin-bottom: 0.1em;
+    font-size: 1.8em;
+    font-weight: 300;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block .gldn-footer-email {
+    font-weight: 300;
+    text-decoration: underline;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block .gldn-footer-sms {
+    display: block;
+    margin-top: 0.3em;
+    font-weight: 300;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block .gldn-footer-hours {
+    margin-top: 1.5em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block .gldn-footer-hours p {
+    margin: 0;
+    font-weight: 300;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-cs-block .gldn-footer-hours p strong {
+    font-weight: 400;
+  }
+
+  /* Link groups */
+  #shopify-section-{{ section.id }} .gldn-footer-links {
+    padding: 2.5em 0 6em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-links .gldn-footer-group {
+    padding-right: 1em;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-links .gldn-footer-group:last-child {
+    padding-right: 0;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-links .gldn-footer-item {
+    display: block;
+    padding: 0.25em 0;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  @media (hover: hover) {
+    #shopify-section-{{ section.id }} .gldn-footer-links .gldn-footer-item:hover {
+      opacity: 0.7;
+    }
+  }
+
+  /* Social icons */
+  #shopify-section-{{ section.id }} .gldn-footer-social {
+    display: flex;
+    gap: 1em;
+    margin-top: 0.5em;
+    padding-bottom: 2em;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-social a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  @media (hover: hover) {
+    #shopify-section-{{ section.id }} .gldn-footer-social a:hover {
+      opacity: 0.7;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-social svg {
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    fill: {{ section.settings.left_text }};
+  }
+
+  /* ── Right column (sage) ────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .gldn-footer-right {
+    background-color: {{ section.settings.right_bg }};
+    color: {{ section.settings.right_text }};
+    padding-top: 5.5em;
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-right * {
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-right .gldn-footer-inner {
+    padding: 0 2em 5.5em;
+    max-width: {{ section.settings.right_content_width }};
+    margin: 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-right h2 {
+    margin-bottom: 0.3em;
+    font-size: 1.8em;
+    font-weight: 300;
+  }
+
+  /* Newsletter form */
+  #shopify-section-{{ section.id }} .gldn-footer-nl-label {
+    display: block;
+    margin-bottom: 2em;
+    font-size: 1em;
+    font-weight: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-form-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-input {
+    border: none;
+    font-weight: 400;
+    background: {{ section.settings.right_text }};
+    color: #333333;
+    width: 100%;
+    padding: 0.7em 3em 0.7em 1.2em;
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-input::placeholder {
+    color: #808080;
+    font-weight: 400;
+    font-size: 0.7em;
+    letter-spacing: 0.1em;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-submit {
+    padding: 0 1em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    color: #333333;
+  }
+
+  @media (hover: hover) {
+    #shopify-section-{{ section.id }} .gldn-footer-nl-submit:hover {
+      opacity: 1;
+      transform: translateX(0.2em);
+    }
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-submit svg {
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-success {
+    color: #b6cac2;
+    font-size: 1.5em;
+    font-weight: 300;
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .gldn-footer-nl-error {
+    color: #e8cccc;
+    font-size: 0.75em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.5em;
+  }
+
+  /* ── Mobile ─────────────────────────────────────────────────── */
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .gldn-footer-main {
+      flex-direction: column-reverse;
+    }
+
+    #shopify-section-{{ section.id }} .gldn-footer-left,
+    #shopify-section-{{ section.id }} .gldn-footer-right {
+      width: 100%;
+      padding-top: 3.5em;
+    }
+
+    #shopify-section-{{ section.id }} .gldn-footer-left .gldn-footer-inner {
+      padding: 0 2em;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .gldn-footer-links {
+      flex-wrap: wrap;
+      margin-left: -1em;
+      padding: 2.8em 0 1.5em;
+    }
+
+    #shopify-section-{{ section.id }} .gldn-footer-links .gldn-footer-group {
+      padding-left: 1em;
+      margin-bottom: 1.5em;
+      padding-right: 0;
+      width: 50%;
+      box-sizing: border-box;
+    }
+
+    #shopify-section-{{ section.id }} .gldn-footer-right .gldn-footer-inner {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<div class="gldn-footer-main">
+  {%- comment -%} ── LEFT COLUMN (charcoal) ───────────────────── {%- endcomment -%}
+  <div class="gldn-footer-left">
+    <div class="gldn-footer-inner">
+
+      {%- comment -%} Contact / CS block {%- endcomment -%}
+      <div class="gldn-footer-cs-block">
+        {%- if section.settings.title != blank -%}
+          <h2>{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.email != blank -%}
+          <a class="gldn-footer-email" href="mailto:{{ section.settings.email | escape }}">
+            {{- section.settings.email | escape -}}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.sms != blank -%}
+          <span class="gldn-footer-sms">
+            Text us:
+            <a href="sms:{{ section.settings.sms | remove: '.' | remove: '-' | remove: ' ' }}">
+              {{- section.settings.sms | escape -}}
+            </a>
+          </span>
+        {%- endif -%}
+        {%- if section.settings.cs_hours != blank -%}
+          <div class="gldn-footer-hours">{{ section.settings.cs_hours }}</div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Link columns from footer linklist (nested structure) {%- endcomment -%}
+      {%- if left_menu.links.size > 0 -%}
+        <nav class="gldn-footer-links" aria-label="Footer navigation">
+          {%- for parent in left_menu.links -%}
+            {%- if parent.links.size > 0 -%}
+              <div class="gldn-footer-group">
+                {%- for child in parent.links -%}
+                  <a
+                    class="gldn-footer-item"
+                    href="{{ child.url }}"
+                    {%- unless child.url contains request.host -%}{%- if child.url contains 'http' %} target="_blank" rel="noopener noreferrer"{%- endif -%}{%- endunless -%}
+                  >
+                    {{- child.title | escape -}}
+                  </a>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+
+      {%- comment -%} Social icons {%- endcomment -%}
+      {%- if show_social -%}
+        <div class="gldn-footer-social">
+          {%- if fb_url != blank -%}
+            <a href="{{ fb_url }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                {%- render 'icon', icon: 'facebook' -%}
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if ig_url != blank -%}
+            <a href="{{ ig_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                {%- render 'icon', icon: 'instagram' -%}
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if pi_url != blank -%}
+            <a href="{{ pi_url }}" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                {%- render 'icon', icon: 'pinterest' -%}
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if tw_url != blank -%}
+            <a href="{{ tw_url }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                {%- render 'icon', icon: 'twitter' -%}
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if tt_url != blank -%}
+            <a href="{{ tt_url }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                {%- render 'icon', icon: 'tiktok' -%}
+              </svg>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+  {%- comment -%} ── RIGHT COLUMN (sage) ─────────────────────── {%- endcomment -%}
+  <div class="gldn-footer-right">
+    <div class="gldn-footer-inner">
+
+      {%- if section.settings.newsletter_title != blank -%}
+        <h2>{{ section.settings.newsletter_title }}</h2>
+      {%- endif -%}
+
+      {%- form 'customer' -%}
+        <input type="hidden" name="contact[tags]" value="prospect,newsletter">
+        <div
+          class="gldn-footer-nl-success"
+          {%- if form.posted_successfully? %} style="display:block"{%- endif -%}
+          aria-live="polite"
+        >
+          {{ section.settings.newsletter_success | escape }}
+        </div>
+        <div
+          class="gldn-footer-nl-fields"
+          {%- if form.posted_successfully? %} style="display:none"{%- endif -%}
+        >
+          {%- if section.settings.newsletter_label != blank -%}
+            <label class="gldn-footer-nl-label" for="gldn-footer-email">
+              {{- section.settings.newsletter_label | escape -}}
+            </label>
+          {%- endif -%}
+          <div class="gldn-footer-nl-form-wrap">
+            <input
+              id="gldn-footer-email"
+              type="email"
+              name="contact[email]"
+              placeholder="ENTER YOUR EMAIL"
+              class="gldn-footer-nl-input"
+              aria-required="true"
+              autocomplete="email"
+              required
+            >
+            <button type="submit" class="gldn-footer-nl-submit" aria-label="Submit">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <line x1="5" y1="12" x2="19" y2="12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="12 5 19 12 12 19" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          {%- if form.errors -%}
+            <p class="gldn-footer-nl-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+          {%- endif -%}
+        </div>
+      {%- endform -%}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "GLDN Footer Main",
+  "class": "section-wrapper",
+  "enabled_on": { "groups": ["footer"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Left column - contact & links"
+    },
+    {
+      "type": "color",
+      "id": "left_bg",
+      "label": "Background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "left_text",
+      "label": "Text colour",
+      "default": "#fdfdfd"
+    },
+    {
+      "type": "text",
+      "id": "left_content_width",
+      "label": "Content max-width",
+      "default": "35.5em"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Drop us a line."
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email address",
+      "default": "support@gldn.com"
+    },
+    {
+      "type": "text",
+      "id": "sms",
+      "label": "SMS / text number",
+      "default": "206-502-0855"
+    },
+    {
+      "type": "richtext",
+      "id": "cs_hours",
+      "label": "Customer service hours",
+      "default": "<p><strong>Monday - Friday</strong> 8am - 5pm PST</p><p><strong>Saturday - Sunday</strong> 9am - 4pm PST</p>"
+    },
+    {
+      "type": "link_list",
+      "id": "link_list",
+      "label": "Footer link menu",
+      "default": "footer",
+      "info": "Top-level items act as column separators; their children become the links."
+    },
+    {
+      "type": "header",
+      "content": "Social icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter / X URL"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "header",
+      "content": "Right column - newsletter"
+    },
+    {
+      "type": "color",
+      "id": "right_bg",
+      "label": "Background",
+      "default": "#4c544c"
+    },
+    {
+      "type": "color",
+      "id": "right_text",
+      "label": "Text colour",
+      "default": "#fdfdfd"
+    },
+    {
+      "type": "text",
+      "id": "right_content_width",
+      "label": "Content max-width",
+      "default": "25em"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter heading",
+      "default": "$10 off, down here!"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_label",
+      "label": "Newsletter label",
+      "default": "Sign up for exclusive deals and early access to new arrivals."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_success",
+      "label": "Success message",
+      "default": "Thank You!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "GLDN Footer Main"
+    }
+  ]
+}
+{% endschema %}

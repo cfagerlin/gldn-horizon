@@ -29,12 +29,14 @@
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
+    {{ 'custom.css' | asset_url | stylesheet_tag }}
     {%- render 'color-schemes' -%}
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
 
+    {%- render 'custom-searchspring' -%}
     {{ content_for_header }}
   </head>
 
@@ -132,5 +134,7 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {%- render 'custom-beam' -%}
   </body>
 </html>

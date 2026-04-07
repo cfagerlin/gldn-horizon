@@ -20,43 +20,15 @@
 
 /* ============================================================
    Footer two-tone
-   Layout: left column (links/contact) 59% · right column (newsletter) flex-1
-   In the admin, place two footer sections in the footer group:
-     1. Footer (links + contact info) — assign scheme-2 or your dark scheme
-     2. Footer (newsletter) — assign scheme-3 or your light scheme
-   The footer-utilities (copyright bar) spans full width below both.
+   Structure (footer-group.json order):
+     1. custom-footer-trust-bar  — full-width trust signals bar
+     2. custom-footer-main       — self-contained two-column footer
+                                   (charcoal left 59% | sage right 41%)
+     3. footer-utilities         — full-width copyright bar
+
+   The two-tone split is handled entirely inside custom-footer-main.liquid
+   using its own internal flex layout, so no grid is needed here.
    ============================================================ */
-
-@media screen and (min-width: 990px) {
-  footer {
-    display: grid;
-    grid-template-columns: 59fr 41fr;
-    grid-template-rows: auto auto;
-    align-items: stretch;
-  }
-
-  /* First two section-wrappers are the left/right columns */
-  footer > .section-wrapper:nth-child(1) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  footer > .section-wrapper:nth-child(2) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  /* footer-utilities copyright bar always spans full width */
-  footer > .footer-utilities {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  /* section-background must fill its grid cell */
-  footer > .section-wrapper .section-background {
-    inset: 0;
-  }
-}
 
 /* ============================================================
    Button variants (v3–v6)
@@ -190,22 +162,26 @@
    Subheading: Raleway (Google) — wt 400, uppercase, ls 0.07em
    ============================================================ */
 :root {
-  --font-body--family: 'freight-sans-pro', 'Work Sans', sans-serif;
-  --font-body--weight: 300;
-  --font-body--style: normal;
+  /* !important needed: Horizon's theme-styles-variables.liquid generates
+     --font-*--family from font_picker settings (Inter) AFTER custom.css
+     loads. Since Shopify's font_picker doesn't host freight-sans-pro or
+     Spectral, we override here with our @import-loaded fonts. */
+  --font-body--family: 'freight-sans-pro', 'Work Sans', sans-serif !important;
+  --font-body--weight: 300 !important;
+  --font-body--style: normal !important;
 
-  --font-heading--family: 'Spectral', Georgia, serif;
-  --font-heading--weight: 200;
-  --font-heading--style: normal;
-  --font-heading--spacing: -0.02em;
-  --font-h1--spacing: -0.02em;
-  --font-h2--spacing: -0.02em;
-  --font-h3--spacing: -0.02em;
-  --font-h4--spacing: -0.02em;
+  --font-heading--family: 'Spectral', Georgia, serif !important;
+  --font-heading--weight: 200 !important;
+  --font-heading--style: normal !important;
+  --font-heading--spacing: -0.02em !important;
+  --font-h1--spacing: -0.02em !important;
+  --font-h2--spacing: -0.02em !important;
+  --font-h3--spacing: -0.02em !important;
+  --font-h4--spacing: -0.02em !important;
 
-  --font-subheading--family: 'Raleway', 'Work Sans', sans-serif;
-  --font-subheading--weight: 400;
-  --font-subheading--style: normal;
+  --font-subheading--family: 'Raleway', 'Work Sans', sans-serif !important;
+  --font-subheading--weight: 400 !important;
+  --font-subheading--style: normal !important;
 }
 
 /* Body: 16px base, 1.5 line-height, 0.01em letter-spacing */
@@ -216,14 +192,81 @@ body {
   font-weight: 300;
 }
 
-/* Navigation uses Raleway uppercase */
+/* Navigation — freight-sans-pro, 1em (~16px), wt 400, uppercase
+   Live site: font-size 1em, font-weight 400, text-transform uppercase,
+   letter-spacing configurable (≈0.01em).
+   Horizon uses CSS custom properties (--menu-top-level-font-*) internally
+   on .menu-list__link which override class-level font rules. We must
+   override both the variables AND the properties. */
+#header-component .overflow-menu,
+#header-component .header-menu,
+#header-component .header-menu__inner {
+  --menu-top-level-font-size-desktop: 1em;
+  --menu-top-level-font-weight: 400;
+  --menu-top-level-font-size: 1em;
+}
+
 .header__nav,
 .header__nav a,
-[class*='header__menu'] {
-  font-family: var(--font-subheading--family);
-  font-weight: 400;
+.header__nav-item,
+.header__nav-item a,
+[class*='header__menu'],
+[class*='header__menu'] a,
+.menu-list__link {
+  font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  font-size: 1em !important;
+  font-weight: 400 !important;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.01em;
+}
+
+/* Propagate the GLDN header state text colour to ALL header elements.
+   Strategy: override Horizon's --color-foreground-rgb CSS variable on the
+   header-component itself so every child that uses rgb(var(--color-foreground-rgb))
+   automatically gets the correct colour for each state. Then add explicit
+   color rules for elements that set colour directly (nav links, logo, etc.).
+
+   --color-foreground-rgb expects space-separated R G B (e.g. "253 253 253").
+   This is the ONLY reliable way to control the search button, cart icon, and
+   other header-actions children because Horizon applies color via this variable
+   at very high specificity. */
+#header-component[data-gldn-state='normal'] {
+  --color-foreground-rgb: 253 253 253;
+  --color-foreground: #fdfdfd;
+}
+#header-component[data-gldn-state='hover'] {
+  --color-foreground-rgb: 51 51 51;
+  --color-foreground: #333333;
+}
+#header-component[data-gldn-state='scroll'] {
+  --color-foreground-rgb: 51 51 51;
+  --color-foreground: #333333;
+}
+
+/* Explicit colour rules for elements that don't use --color-foreground-rgb
+   (nav links, logo, etc.) or need !important to beat other selectors. */
+#header-component[data-gldn-state='normal'] .header__nav a,
+#header-component[data-gldn-state='normal'] [class*='header__menu'] a,
+#header-component[data-gldn-state='normal'] .menu-list__link,
+#header-component[data-gldn-state='normal'] .header-logo,
+#header-component[data-gldn-state='normal'] .header__columns {
+  color: var(--gldn-header-normal-text, #fdfdfd) !important;
+}
+
+#header-component[data-gldn-state='hover'] .header__nav a,
+#header-component[data-gldn-state='hover'] [class*='header__menu'] a,
+#header-component[data-gldn-state='hover'] .menu-list__link,
+#header-component[data-gldn-state='hover'] .header-logo,
+#header-component[data-gldn-state='hover'] .header__columns {
+  color: var(--gldn-header-hover-text, #333333) !important;
+}
+
+#header-component[data-gldn-state='scroll'] .header__nav a,
+#header-component[data-gldn-state='scroll'] [class*='header__menu'] a,
+#header-component[data-gldn-state='scroll'] .menu-list__link,
+#header-component[data-gldn-state='scroll'] .header-logo,
+#header-component[data-gldn-state='scroll'] .header__columns {
+  color: var(--gldn-header-scroll-text, #333333) !important;
 }
 
 /* ============================================================
@@ -232,8 +275,95 @@ body {
 
 /* ============================================================
    Homepage: Hero slideshow overrides
-   Horizon slideshow is used as-is; add GLDN-specific tweaks here
+   Matches live gldn.com cta_banner section.
+   Source: live theme's inline <style> block + DevTools inspection.
    ============================================================ */
+
+/* 1. Section height — live uses padding-top: 66.67vh.
+      Both sites have transparent headers overlapping the hero. */
+.slideshow-section slideshow-slides {
+  --slide-min-height-desktop: 66.67vh !important;
+}
+
+/* 2. Gradient overlay — live uses :before, 6em tall, 30% opacity.
+      Horizon's built-in overlay covers full height which is wrong.
+      We disable it in JSON and add a custom partial-height gradient. */
+.slideshow-section .slide__content {
+  position: relative;
+}
+.slideshow-section .slide__content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6em;
+  background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  opacity: 0.3;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 3. Text container — live uses max-width: 25em, left-aligned via
+      flex-start, with text center-aligned inside the narrow panel.
+      Horizon's _slide.liquid sets `margin: auto` on .slide__content > *
+      which centers the panel — override left margin to push it left.
+      Live padding: 7em 2em 0 0; reduced for Horizon's overlapping header. */
+.slideshow-section .slide__content > .group-block-content {
+  max-width: 25em;
+  margin-left: 0;                /* Override Horizon's margin: auto centering */
+  margin-right: auto;
+  padding-top: 5em;              /* Slightly less than live's 7em since
+                                    Horizon header overlaps the top */
+  text-align: center;            /* Live site centers text WITHIN the narrow panel */
+}
+
+/* 3b. Force center text alignment — Horizon's text-block wrappers
+       use fit-content width and left text-align by default.
+       The live site uses text-align: center on .captions. */
+.slideshow-section .text-block,
+.slideshow-section h1,
+.slideshow-section .slide__content p {
+  text-align: center !important;
+}
+
+/* 3c. Center the button within the panel — Horizon's button block
+       defaults to left-aligned. Live site centers the button. */
+.slideshow-section .button-block,
+.slideshow-section [class*="button-block"] {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* 4. Hero heading — color override */
+.slideshow-section .text-block.h1,
+.slideshow-section h1 {
+  color: #fdfdfd !important;
+}
+
+/* 5. Hero subtitle — freight-sans-pro, light weight */
+.slideshow-section .slide__content p {
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: #fdfdfd;
+}
+
+/* 6. Hero CTA button — matches live .btn.v2 exactly:
+      font-size: .75em, padding: 1.17em 2em, min-width: 240px */
+.slideshow-section a.button {
+  font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  font-size: 0.75em;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1.17em 2em;
+  color: #333333;
+  background-color: #fdfdfd;
+  border: 0;
+  border-radius: 0;
+  min-width: 240px;
+  text-align: center;
+}
 
 /* ============================================================
    Homepage: CTA Gallery (custom-cta-gallery)
@@ -279,16 +409,12 @@ body {
 
 /*
  * Normal state — transparent header on hero pages.
- * Only override when the section has set a non-zero opacity,
- * signalled by --gldn-header-normal-opacity being defined.
- * When opacity is 0 Horizon's own transparent-header logic takes over.
+ * !important needed: Horizon's color-scheme classes use !important
+ * on background-color, so we must match.
  */
 #header-component[data-gldn-state='normal'] .header__row {
-  background-color: rgba(
-    var(--gldn-header-normal-bg-rgb, 255 255 255),
-    var(--gldn-header-normal-opacity, 0)
-  );
-  color: var(--gldn-header-normal-text, currentColor);
+  background-color: var(--gldn-header-normal-bg, transparent) !important;
+  color: var(--gldn-header-normal-text, currentColor) !important;
 }
 
 /*
@@ -296,11 +422,8 @@ body {
  * and the page is NOT scrolled.
  */
 #header-component[data-gldn-state='hover'] .header__row {
-  background-color: rgba(
-    var(--gldn-header-hover-bg-rgb, 255 255 255),
-    var(--gldn-header-hover-opacity, 0.95)
-  );
-  color: var(--gldn-header-hover-text, inherit);
+  background-color: var(--gldn-header-hover-bg, rgba(255, 255, 255, 0.95)) !important;
+  color: var(--gldn-header-hover-text, inherit) !important;
 }
 
 /*
@@ -308,11 +431,8 @@ body {
  * Takes priority over hover.
  */
 #header-component[data-gldn-state='scroll'] .header__row {
-  background-color: rgba(
-    var(--gldn-header-scroll-bg-rgb, 255 255 255),
-    var(--gldn-header-scroll-opacity, 1)
-  );
-  color: var(--gldn-header-scroll-text, inherit);
+  background-color: var(--gldn-header-scroll-bg, rgba(255, 255, 255, 1)) !important;
+  color: var(--gldn-header-scroll-text, inherit) !important;
 }
 
 /*
@@ -321,6 +441,297 @@ body {
  */
 #header-component[data-gldn-state] .header__row svg {
   fill: currentColor;
+}
+
+/* ============================================================
+   Header — Action items order + styling
+   Live site order (left→right): Search, Wishlist, LOGIN, Cart
+   Horizon default order: Search, Account, Cart, Wishlist
+   ============================================================ */
+
+/* Reorder header actions to match live site via flexbox order.
+   Tighten spacing: Horizon's default 44px touch targets create gaps
+   wider than the live site (~20px between heart / LOGIN / cart).
+   Override all action containers to shrink-wrap their content. */
+header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25em; /* ~20px — matches live site spacing between heart/LOGIN/cart */
+  margin: 0 !important;
+}
+/* Reset negative margins Horizon applies to header action items */
+#header-component .header__column--right > search-button {
+  margin: 0 !important;
+}
+/* Shrink the 44px touch-target boxes to wrap content.
+   The .svg-wrapper inside each action is the actual size control.
+   Search-button lives in .header__column--right (sibling of header-actions),
+   so it needs its own selector. */
+#header-component header-actions .svg-wrapper,
+#header-component .header__column--right > search-button .svg-wrapper {
+  width: 24px !important;
+  height: 24px !important;
+}
+#header-component header-actions .header-actions__action,
+#header-component header-actions .gldn-wishlist-action,
+#header-component header-actions cart-drawer-component,
+#header-component header-actions .cart-drawer,
+#header-component .header__column--right > search-button,
+#header-component .header__column--right > search-button .header-actions__action {
+  width: auto !important;
+  min-width: 0 !important;
+}
+search-button       { order: 0; }
+.gldn-wishlist-action { order: 1; }
+header-actions .account-button { order: 2; }
+header-actions .cart-drawer,
+header-actions .action__cart { order: 3; }
+
+/* Account button — live site shows "LOGIN" text instead of person icon.
+   Hide the SVG icon span, show the text span with "LOGIN" override. */
+@media screen and (min-width: 750px) {
+  /* Hide the person icon SVG (second span inside shopify-account) */
+  header-actions .account-button shopify-account span:has(.account-button__icon) {
+    display: none !important;
+  }
+
+  /* Show the text span that Horizon hides with .hidden class */
+  header-actions .account-button .account-button__text.hidden {
+    display: inline !important;
+    clip: unset !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    /* Override original text with "LOGIN" */
+    font-size: 0;
+    line-height: 0;
+  }
+
+  header-actions .account-button .account-button__text.hidden::after {
+    content: 'LOGIN';
+    font-size: 0.8125rem;
+    line-height: normal;
+    font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: currentColor;
+  }
+}
+
+/* Header row height — live ~57px vs Horizon ~86px.
+   Reduce internal padding in both row and inner grid. */
+@media screen and (min-width: 750px) {
+  #header-component .header__row--top {
+    min-height: auto;
+    padding-block: 0;
+  }
+
+  #header-component .header__row--top .header__columns {
+    padding-block: 0.375rem;
+  }
+}
+
+/* Header inner container — live site uses max-width: 1248px.
+   Horizon uses page-width which can be wider. Constrain the
+   header content to match the live site's .container.
+   width: 100% is required because .header__columns is a grid item
+   inside .header__row; without it, the grid item sizes to content
+   (~841px) instead of stretching to fill its track (~1237px). */
+#header-component .header__row .header__columns {
+  width: 100%;
+  max-width: 1248px;
+  margin-inline: auto;
+  padding-inline: 1.5em;
+}
+
+/* Icon stroke — force thin outline icons to match live site.
+   Horizon's icon_stroke setting controls --icon-stroke-width.
+   We override here as a safety net in case the setting isn't set. */
+:root {
+  --icon-stroke-width: 1 !important;
+}
+
+/* Account button colour — the .account-button div carries its own
+   color-scheme class (e.g. .color-scheme-1) that resets --color-foreground-rgb
+   to 51 51 51 (the default dark text scheme), breaking our header-level
+   override. Use [class*="color-scheme"] to match any scheme variant. */
+/* :not([data-gldn-state]) handles initial page load before JS sets the attribute */
+#header-component:not([data-gldn-state]) .account-button[class*="color-scheme"],
+#header-component[data-gldn-state='normal'] .account-button[class*="color-scheme"] {
+  --color-foreground-rgb: 253 253 253 !important;
+  color: rgb(253 253 253) !important;
+}
+#header-component[data-gldn-state='hover'] .account-button[class*="color-scheme"],
+#header-component[data-gldn-state='scroll'] .account-button[class*="color-scheme"] {
+  --color-foreground-rgb: 51 51 51 !important;
+  color: rgb(51 51 51) !important;
+}
+#header-component .account-button__text,
+#header-component .account-button__text::after {
+  color: inherit !important;
+}
+
+/* ============================================================
+   Custom Mega Menus
+   Overlays for Shop, Gift Guide, About — read from separate
+   Shopify linklists (mega-menu-shop, mega-menu-gift-guide,
+   mega-menu-about) via custom-mega-menu.liquid.
+   ============================================================ */
+
+custom-mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* When a panel is open, the whole element (including the bridge)
+   must accept pointer events so the mouse can cross the gap. */
+custom-mega-menu[aria-hidden='false'] {
+  pointer-events: auto;
+}
+
+/* Invisible bridge above panels — catches the mouse while it crosses
+   the gap between the nav trigger and the panel content. */
+custom-mega-menu::before {
+  content: '';
+  display: block;
+  height: 20px;
+  margin-bottom: -20px;
+}
+
+.custom-mega-menu__panel {
+  display: none;
+  background: #fff;
+  border-top: 1px solid #e8e8e8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  pointer-events: auto;
+}
+
+.custom-mega-menu__panel.is-active {
+  display: block;
+  animation: megaMenuExpand 280ms ease forwards;
+}
+
+@keyframes megaMenuExpand {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.custom-mega-menu__inner {
+  max-width: 1248px;
+  margin-inline: auto;
+  padding: 2.5em 1.5em 3em;
+}
+
+.custom-mega-menu__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1em 2.5em;
+}
+
+.custom-mega-menu__heading {
+  font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0 0 1em;
+}
+
+.custom-mega-menu__heading a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.custom-mega-menu__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-mega-menu__links li {
+  margin-bottom: 0.5em;
+}
+
+.custom-mega-menu__link {
+  font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #333;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.custom-mega-menu__link:hover {
+  color: #b96749;
+}
+
+/* -- Layout: columns + promo image side-by-side -- */
+.custom-mega-menu__content--with-image {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5em;
+}
+
+.custom-mega-menu__content--with-image .custom-mega-menu__columns {
+  flex: 1;
+}
+
+/* -- Promo image block -- */
+.custom-mega-menu__promo {
+  flex: 0 0 280px;
+}
+
+.custom-mega-menu__promo-link {
+  display: block;
+  text-decoration: none;
+  color: #333;
+}
+
+.custom-mega-menu__promo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.custom-mega-menu__promo-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.875em;
+  font-family: 'freight-sans-pro', 'Work Sans', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #333;
+}
+
+.custom-mega-menu__promo-caption svg {
+  flex-shrink: 0;
+}
+
+.custom-mega-menu__promo-link:hover .custom-mega-menu__promo-caption {
+  color: #b96749;
+}
+
+/* Suppress Horizon's native empty dropdown for items with custom mega menus */
+#header-component .menu-list__submenu:empty {
+  display: none !important;
 }
 
 /* ============================================================

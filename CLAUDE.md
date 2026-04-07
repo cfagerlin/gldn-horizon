@@ -189,13 +189,16 @@ Entry points: assets/custom.css, assets/custom.js
 6. Footer two-tone: custom.css
 7. Button variants (v3-v6): custom.css
 
-## Legacy Theme
-Located at ../dev/gldn-theme-old/ — contains full legacy theme plus migration deliverables:
-- GLDN_Migration_Workplan.xlsx (5-day plan, v3)
-- GLDN_Settings_Gap_Analysis.xlsx (30 capability comparisons + recommendations)
-- GLDN_Theme_Code_Mapping.xlsx (353 legacy files mapped to Horizon equivalents)
-- GLDN_App_Audit.xlsx (49 apps, keep/evaluate/replace/remove)
-- GLDN_Theme_Migration_Assessment.docx (client-ready assessment)
+## Reference Themes
+- **Live theme (current):** ../dev/gldn-theme-040626/ — Exported from live site 2026-04-06. Use as PRIMARY reference for matching styling, content, and structure. Read-only snapshot (not connected to live store).
+- **Legacy theme (original):** ../dev/gldn-theme-old/ — Original export pre-Mother's Day updates. Contains migration deliverables:
+  - GLDN_Migration_Workplan.xlsx (5-day plan, v3)
+  - GLDN_Settings_Gap_Analysis.xlsx (30 capability comparisons + recommendations)
+  - GLDN_Theme_Code_Mapping.xlsx (353 legacy files mapped to Horizon equivalents)
+  - GLDN_App_Audit.xlsx (49 apps, keep/evaluate/replace/remove)
+  - GLDN_Theme_Migration_Assessment.docx (client-ready assessment)
+
+When matching the live site, always prefer gldn-theme-040626 over gldn-theme-old
 
 ## Horizon Notes
 - Responsive: CSS container queries (NOT per-breakpoint settings)

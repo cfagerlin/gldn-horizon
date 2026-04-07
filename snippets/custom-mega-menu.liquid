@@ -1,0 +1,108 @@
+{% comment %}
+  snippets/custom-mega-menu.liquid
+  GLDN — Custom mega menu overlays
+
+  Reads from existing Shopify linklists:
+    - mega-menu-shop
+    - mega-menu-gift-guide
+    - mega-menu-about
+
+  Each linklist has column headings at level 1 and individual links at level 2.
+  The snippet renders hidden panels that are shown/hidden by custom-mega-menu.js
+  on hover of the corresponding top-level nav item.
+
+  Featured images for Gift Guide and About are pulled from section settings
+  (custom-header-states.liquid schema) so they're editable in the Theme Editor.
+{% endcomment %}
+
+{%- assign mega_menus = 'mega-menu-shop,mega-menu-gift-guide,mega-menu-about' | split: ',' -%}
+{%- assign mega_labels = 'Shop,Gift Guide,About' | split: ',' -%}
+
+<custom-mega-menu class="custom-mega-menu" aria-hidden="true">
+  {%- for handle in mega_menus -%}
+    {%- assign menu = linklists[handle] -%}
+    {%- assign panel_key = mega_labels[forloop.index0] | downcase | handleize -%}
+    {%- if menu.links.size > 0 -%}
+      <div
+        class="custom-mega-menu__panel"
+        data-mega-menu-for="{{ panel_key }}"
+        role="region"
+        aria-label="{{ mega_labels[forloop.index0] }} navigation"
+      >
+        <div class="custom-mega-menu__inner">
+          <div class="custom-mega-menu__content{% if panel_key == 'gift-guide' or panel_key == 'about' %} custom-mega-menu__content--with-image{% endif %}">
+            <div class="custom-mega-menu__columns">
+              {%- for column in menu.links -%}
+                <div class="custom-mega-menu__column">
+                  <h4 class="custom-mega-menu__heading">
+                    {%- if column.url != blank and column.url != '#' -%}
+                      <a href="{{ column.url }}">{{ column.title }}</a>
+                    {%- else -%}
+                      {{ column.title }}
+                    {%- endif -%}
+                  </h4>
+                  {%- if column.links.size > 0 -%}
+                    <ul class="custom-mega-menu__links" role="list">
+                      {%- for child in column.links -%}
+                        <li>
+                          <a href="{{ child.url }}" class="custom-mega-menu__link">
+                            {{ child.title }}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
+            </div>
+
+            {%- comment -%} Featured promo image (Gift Guide & About only) {%- endcomment -%}
+            {%- if panel_key == 'gift-guide' and section.settings.gift_guide_image != blank -%}
+              <div class="custom-mega-menu__promo">
+                <a href="{{ section.settings.gift_guide_link }}" class="custom-mega-menu__promo-link">
+                  <img
+                    src="{{ section.settings.gift_guide_image | image_url: width: 600 }}"
+                    alt="{{ section.settings.gift_guide_caption | escape }}"
+                    loading="lazy"
+                    width="300"
+                    height="300"
+                    class="custom-mega-menu__promo-image"
+                  >
+                  <span class="custom-mega-menu__promo-caption">
+                    {{ section.settings.gift_guide_caption }}
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <circle cx="10" cy="10" r="9.5" stroke="currentColor"/>
+                      <path d="M8.5 6.5L12 10L8.5 13.5" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            {%- elsif panel_key == 'about' and section.settings.about_image != blank -%}
+              <div class="custom-mega-menu__promo">
+                <a href="{{ section.settings.about_link }}" class="custom-mega-menu__promo-link">
+                  <img
+                    src="{{ section.settings.about_image | image_url: width: 600 }}"
+                    alt="{{ section.settings.about_caption | escape }}"
+                    loading="lazy"
+                    width="300"
+                    height="300"
+                    class="custom-mega-menu__promo-image"
+                  >
+                  <span class="custom-mega-menu__promo-caption">
+                    {{ section.settings.about_caption }}
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <circle cx="10" cy="10" r="9.5" stroke="currentColor"/>
+                      <path d="M8.5 6.5L12 10L8.5 13.5" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+</custom-mega-menu>
+
+<script src="{{ 'custom-mega-menu.js' | asset_url }}" defer></script>
